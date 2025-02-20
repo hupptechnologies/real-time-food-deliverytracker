@@ -1,24 +1,25 @@
-interface ApiResponse<T> {
+import { Response } from 'express';
+
+interface ApiResponsePayload<T = any> {
 	success: boolean;
-	message?: string;
-	error?: string | null;
-	data?: T | null;
+	message: string;
+	data?: T;
+	errorCode?: string | undefined;
 }
 
-export function successResponse<T>(
-	data: T | null,
-	message: string = 'Success',
-): ApiResponse<T> {
-	return {
-		success: true,
-		message: message,
-		data: data,
+export function ApiResponse<T>(
+	res: Response,
+	statusCode: number,
+	success: boolean,
+	message: string,
+	data?: T,
+	errorCode?: string | undefined,
+): void {
+	const payload: ApiResponsePayload<T> = {
+		success,
+		message,
+		data,
+		errorCode,
 	};
-}
-
-export function errorResponse<T>(error: string): ApiResponse<T> {
-	return {
-		success: false,
-		error: error,
-	};
+	res.status(statusCode).json(payload);
 }

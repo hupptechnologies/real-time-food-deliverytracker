@@ -2,8 +2,10 @@ import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import authRoutes from './modules/auth/auth.route';
+import adminRoutes from './modules/admin/admin.route';
 import { AppDataSource } from './config/database.config';
 import { DataSource } from 'typeorm';
+import errorMiddleware from './middlewares/error.middleware';
 
 class App {
 	public app: Express;
@@ -17,10 +19,10 @@ class App {
 		this.port = port || 3000;
 		this.dataSource = AppDataSource;
 
-		this.initializeDatabaseConnection();
-		this.initializeMiddleware();
-		this.initializeRoutes();
-		this.initializeErrorHandling();
+		this.initializeDatabaseConnection(); // 1. Database
+		this.initializeMiddleware(); // 2. Middleware
+		this.initializeRoutes(); // 3. Routes
+		this.initializeErrorHandling(); // 4. Error Handling <--- IS THIS REALLY #4?
 	}
 
 	public static getInstance(port?: number): App {
@@ -52,16 +54,11 @@ class App {
 			res.status(200).send('Hello world!');
 		});
 		this.app.use('/api/auth', authRoutes);
+		this.app.use('/api/admin', adminRoutes);
 	}
 
 	private initializeErrorHandling() {
-		this.app.use((err: any, _req: Request, res: Response) => {
-			console.error('ERROR HANDLER:', err);
-			const statusCode = err.statusCode || 500;
-			res.status(statusCode).json({
-				message: err.message || 'Internal Server Error',
-			});
-		});
+		this.app.use(errorMiddleware);
 	}
 
 	public listen() {

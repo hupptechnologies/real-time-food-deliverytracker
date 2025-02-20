@@ -25,14 +25,9 @@ export default tseslint.config(
 			'prettier/prettier': ['error', { useTabs: true, tabWidth: 2 }],
 			'react-hooks/exhaustive-deps': 'off',
 			'no-console': ['off'],
-			'no-unused-vars': [
+			'@typescript-eslint/no-unused-vars': [
 				'error',
-				{
-					vars: 'all',
-					args: 'all',
-					ignoreRestSiblings: false,
-					argsIgnorePattern: '^_',
-				},
+				{ vars: 'all', args: 'after-used', ignoreRestSiblings: false },
 			],
 			eqeqeq: 'error',
 			curly: 'error',
