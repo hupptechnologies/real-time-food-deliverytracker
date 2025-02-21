@@ -2,7 +2,8 @@ import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import authRoutes from './modules/auth/auth.route';
-import adminRoutes from './modules/admin/admin.route';
+import rolesRoutes from './modules/role/role.route';
+import usersRoutes from './modules/user/user.route';
 import { AppDataSource } from './config/database.config';
 import { DataSource } from 'typeorm';
 import errorMiddleware from './middlewares/error.middleware';
@@ -19,10 +20,10 @@ class App {
 		this.port = port || 3000;
 		this.dataSource = AppDataSource;
 
-		this.initializeDatabaseConnection(); // 1. Database
-		this.initializeMiddleware(); // 2. Middleware
-		this.initializeRoutes(); // 3. Routes
-		this.initializeErrorHandling(); // 4. Error Handling <--- IS THIS REALLY #4?
+		this.initializeDatabaseConnection();
+		this.initializeMiddleware();
+		this.initializeRoutes();
+		this.initializeErrorHandling();
 	}
 
 	public static getInstance(port?: number): App {
@@ -54,7 +55,8 @@ class App {
 			res.status(200).send('Hello world!');
 		});
 		this.app.use('/api/auth', authRoutes);
-		this.app.use('/api/admin', adminRoutes);
+		this.app.use('/api/roles', rolesRoutes);
+		this.app.use('/api/users', usersRoutes);
 	}
 
 	private initializeErrorHandling() {

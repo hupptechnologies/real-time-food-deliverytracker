@@ -1,4 +1,4 @@
-import { Role } from '../modules/admin/entities/role.entity';
+import { Role } from '../modules/role/entities/role.entity';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddDefaultRolesSeed1740044123186 implements MigrationInterface {
@@ -17,8 +17,8 @@ export class AddDefaultRolesSeed1740044123186 implements MigrationInterface {
 				where: { name: roleData.name },
 			});
 			if (!existingRole) {
-				const role = roleRepository.create(roleData); // Create Role entity
-				await roleRepository.save(role); // Save the new role to the database
+				const role = roleRepository.create(roleData);
+				await roleRepository.save(role);
 				console.log(`Role "${roleData.name}" created.`);
 			} else {
 				console.log(`Role "${roleData.name}" already exists.`);

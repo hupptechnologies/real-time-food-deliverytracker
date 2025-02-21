@@ -2,7 +2,7 @@ import express from 'express';
 import AuthController from './auth.controller';
 import AuthService from './auth.service';
 import UserService from '../user/user.service';
-import RolesService from '../admin/roles/roles.service';
+import RolesService from '../role/role.service';
 import validationMiddleware from '../../middlewares/validation.middleware';
 import { AuthDto } from './dto/auth.dto';
 

@@ -1,13 +1,13 @@
 import { In } from 'typeorm';
-import { AppDataSource } from '../../../config/database.config';
-import NotFoundException from '../../../exceptions/not-found.exception';
-import BadRequestException from '../../../exceptions/bad-request.exception';
-import { Role } from '../entities/role.entity';
+import { AppDataSource } from '../../config/database.config';
+import NotFoundException from '../../exceptions/not-found.exception';
+import BadRequestException from '../../exceptions/bad-request.exception';
+import { Role } from './entities/role.entity';
 
 class RolesService {
 	private roleRepository = AppDataSource.getRepository(Role);
 
-	public async createRole(roleData: any): Promise<Role> {
+	public async create(roleData: any): Promise<Role> {
 		const existingRole = await this.roleRepository.findOne({
 			where: { name: roleData.name },
 		});
@@ -26,11 +26,11 @@ class RolesService {
 		return savedRole;
 	}
 
-	public async getAllRoles(): Promise<Role[]> {
+	public async findAll(): Promise<Role[]> {
 		return this.roleRepository.find();
 	}
 
-	public async getRoleById(roleId: number): Promise<Role> {
+	public async findOne(roleId: number): Promise<Role> {
 		const role = await this.roleRepository.findOneBy({ id: roleId });
 		if (!role) {
 			throw new NotFoundException(
@@ -41,16 +41,16 @@ class RolesService {
 		return role;
 	}
 
-	public async updateRole(roleId: number, roleData: any): Promise<Role> {
-		const role = await this.getRoleById(roleId);
+	public async update(roleId: number, roleData: any): Promise<Role> {
+		const role = await this.findOne(roleId);
 		Object.assign(role, roleData);
 
 		const updatedRole = await this.roleRepository.save(role);
 		return updatedRole;
 	}
 
-	public async deleteRole(roleId: number): Promise<void> {
-		const role = await this.getRoleById(roleId);
+	public async delete(roleId: number): Promise<void> {
+		const role = await this.findOne(roleId);
 		await this.roleRepository.remove(role);
 	}
 

@@ -6,7 +6,7 @@ import {
 	JoinTable,
 	OneToMany,
 } from 'typeorm';
-import { Role } from '../../admin/entities/role.entity';
+import { Role } from '../../role/entities/role.entity';
 import { UserRole } from './user_role.entity';
 
 @Entity('users')
@@ -17,8 +17,8 @@ export class User {
 	@Column({ unique: true })
 	email!: string;
 
-	@Column({ nullable: false })
-	password!: string;
+	@Column({ nullable: false, select: false })
+	password?: string;
 
 	@Column({ nullable: true })
 	name?: string;

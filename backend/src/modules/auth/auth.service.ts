@@ -1,6 +1,5 @@
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
-import BadRequestException from '../../exceptions/bad-request.exception';
 import UnauthorizedException from '../../exceptions/unauthorized.exception';
 import InternalServerErrorException from '../../exceptions/internal-server-error.exception';
 import UserService from '../user/user.service';
@@ -15,15 +14,7 @@ class AuthService {
 	}
 
 	public async registerUser(userData: any): Promise<any> {
-		const { email, password } = userData;
-
-		const existingUser = await this.userService.findByEmail(email);
-		if (existingUser) {
-			throw new BadRequestException(
-				'An account with this email already exist',
-				'DuplicateUser',
-			);
-		}
+		const { password } = userData;
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 		userData.password = hashedPassword;
@@ -48,7 +39,7 @@ class AuthService {
 
 		const passwordsMatched = await bcrypt.compare(
 			loginData.password,
-			user.password,
+			user.password!,
 		);
 
 		if (!passwordsMatched) {

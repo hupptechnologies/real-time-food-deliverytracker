@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import UserService from '../modules/user/user.service';
-import RolesService from '../modules/admin/roles/roles.service';
+import RolesService from '../modules/role/role.service';
 import ForbiddenException from '../exceptions/forbidden.exception';
 import BadRequestException from '../exceptions/bad-request.exception';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
