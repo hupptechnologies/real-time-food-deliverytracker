@@ -5,10 +5,9 @@ import RolesService from '../modules/role/role.service';
 import ForbiddenException from '../exceptions/forbidden.exception';
 import BadRequestException from '../exceptions/bad-request.exception';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
-import NotFoundException from '../exceptions/not-found.exception';
 
 interface UserAuthenticatedRequest extends Request {
-	user?: JwtPayload | { id: number; roles: string[] };
+	user?: JwtPayload | { id: number; role: string };
 }
 
 const authenticateMiddleware = (allowedRoles: string[] = []) => {
@@ -59,18 +58,17 @@ const authenticateMiddleware = (allowedRoles: string[] = []) => {
 			const user = await userService.findUserById(Number(userId));
 
 			if (!user) {
-				return next(new NotFoundException('User not found'));
-			}
-
-			let userRoles: string[] = [];
-			if (user.roles && Array.isArray(user.roles)) {
-				userRoles = user.roles.map((role) => role.name);
-			}
-
-			if (allowedRoles.length > 0) {
-				const hasRequiredRole = allowedRoles.some((role) =>
-					userRoles.includes(role),
+				return next(
+					new UnauthorizedException(
+						'This account might have been blocked!',
+						'AccountBlocked',
+					),
 				);
+			}
+
+			const userRoleName: string | undefined = user.role?.name;
+			if (allowedRoles.length > 0) {
+				const hasRequiredRole = allowedRoles.includes(userRoleName || '');
 				if (!hasRequiredRole) {
 					return next(
 						new ForbiddenException(
@@ -80,7 +78,7 @@ const authenticateMiddleware = (allowedRoles: string[] = []) => {
 				}
 			}
 
-			req.user = { id: Number(userId), roles: userRoles };
+			req.user = { id: Number(userId), role: userRoleName || '' };
 			next();
 		} catch (error) {
 			console.error('Authentication Middleware Error:', error);

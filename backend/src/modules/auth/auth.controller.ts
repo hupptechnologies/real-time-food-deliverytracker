@@ -39,10 +39,10 @@ class AuthController {
 	): Promise<void> {
 		try {
 			const loginData = req.body;
-			const token = await this.authService.loginUser(loginData);
+			const { token, user } = await this.authService.loginUser(loginData);
 
 			this.setJwtCookie(res, token);
-			ApiResponse(res, HttpStatus.OK, true, 'Logged in successfully');
+			ApiResponse(res, HttpStatus.OK, true, 'Logged in successfully', user);
 		} catch (error: any) {
 			next(error);
 		}

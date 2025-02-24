@@ -15,7 +15,7 @@ export class AddUsersTable1739961283805 implements MigrationInterface {
 					},
 					{ name: 'email', type: 'varchar', isUnique: true, isNullable: false },
 					{ name: 'password', type: 'varchar' },
-					{ name: 'name', type: 'varchar', isNullable: false },
+					{ name: 'name', type: 'varchar', isNullable: true },
 					{
 						name: 'createdAt',
 						type: 'timestamp with time zone',
@@ -26,6 +26,11 @@ export class AddUsersTable1739961283805 implements MigrationInterface {
 						type: 'timestamp with time zone',
 						default: 'CURRENT_TIMESTAMP',
 						onUpdate: 'CURRENT_TIMESTAMP',
+					},
+					{
+						name: 'role_id',
+						type: 'integer',
+						isNullable: false,
 					},
 				],
 				indices: [{ columnNames: ['email'], isUnique: true }],

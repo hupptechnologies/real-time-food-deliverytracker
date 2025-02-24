@@ -1,7 +1,6 @@
 import { AppDataSource } from '../../config/database.config';
 import { User } from './entites/user.entity';
 import { Role } from '../role/entities/role.entity';
-import { UserRole } from './entites/user_role.entity';
 import InternalServerErrorException from '../../exceptions/internal-server-error.exception';
 import RolesService from '../role/role.service';
 import NotFoundException from '../../exceptions/not-found.exception';
@@ -9,7 +8,6 @@ import BadRequestException from '../../exceptions/bad-request.exception';
 
 class UserService {
 	private userRepository = AppDataSource.getRepository(User);
-	private userRoleRepository = AppDataSource.getRepository(UserRole);
 	private roleService: RolesService;
 
 	constructor(roleService: RolesService) {
@@ -17,7 +15,7 @@ class UserService {
 	}
 
 	public async create(userData: any): Promise<any> {
-		const { roles, ...restUserData } = userData;
+		const { role, ...restUserData } = userData;
 
 		const existingUser = await this.findByEmail(restUserData.email);
 		if (existingUser) {
@@ -35,58 +33,40 @@ class UserService {
 		const user = new User();
 		Object.assign(user, restUserData);
 
-		let savedUser: User;
-		try {
-			savedUser = await this.userRepository.save(user);
-		} catch (error) {
-			console.error('Database error while saving user:', error);
-			throw new InternalServerErrorException(
-				'Failed to create user due to a server error',
-				'UserCreationError',
-			);
-		}
+		let assignedRole: Role | null = null;
 
-		let assignedRoles: Role[] = [];
-
-		if (roles && Array.isArray(roles) && roles.length > 0) {
-			assignedRoles = await this.roleService.findRolesByIds(roles);
+		if (role) {
+			assignedRole = await this.roleService.findOne(Number(role));
+			if (!assignedRole) {
+				throw new BadRequestException(
+					'Invalid Role ID provided',
+					'InvalidRoleID',
+				);
+			}
 		} else {
 			const defaultUserRole = await this.roleService.findRoleByName('user');
 			if (defaultUserRole) {
-				assignedRoles = [defaultUserRole];
+				assignedRole = defaultUserRole;
 			} else {
 				console.warn('Default "user" role not found in database.');
-				throw new InternalServerErrorException('Failed to create the account');
-			}
-		}
-
-		if (assignedRoles.length > 0) {
-			try {
-				for (const role of assignedRoles) {
-					const userRole = new UserRole();
-					userRole.user = savedUser;
-					userRole.role = role;
-					await this.userRoleRepository.save(userRole);
-				}
-			} catch (error) {
-				console.error('Database error while assigning roles to user:', error);
-				await this.userRepository.remove(savedUser);
 				throw new InternalServerErrorException(
-					'Failed to assign roles to user',
-					'RoleAssignmentError',
+					'Failed to create the account, default role not found',
 				);
 			}
 		}
 
+		user.role = assignedRole;
+		const newUser = await this.userRepository.save(user);
+
 		return {
-			id: savedUser.id,
-			email: savedUser.email,
-			roles: assignedRoles.map((role) => ({ id: role.id, name: role.name })),
+			id: newUser.id,
+			email: newUser.email,
+			role: { id: newUser.role.id, name: newUser.role.name },
 		};
 	}
 
 	public async findAll(): Promise<User[]> {
-		const users = await this.userRepository.find({ relations: ['roles'] });
+		const users = await this.userRepository.find({ relations: ['role'] });
 		const response: User[] = users.map((user) => {
 			return user;
 		});
@@ -96,7 +76,7 @@ class UserService {
 	public async findUserById(id: number): Promise<User | null> {
 		const user = await this.userRepository.findOne({
 			where: { id },
-			relations: ['roles'],
+			relations: ['role'],
 		});
 		return user;
 	}
@@ -104,6 +84,7 @@ class UserService {
 	public async findByEmail(email: string): Promise<User | null> {
 		const user = await this.userRepository.findOne({
 			where: { email },
+			relations: ['role'],
 			select: [
 				'id',
 				'name',
@@ -111,13 +92,13 @@ class UserService {
 				'password',
 				'createdAt',
 				'updatedAt',
-				'roles',
+				'role',
 			],
 		});
 		return user;
 	}
 
-	public async update(userId: number, userData: any): Promise<User> {
+	public async update(userId: number, userData: any): Promise<any> {
 		const user = await this.findUserById(userId);
 
 		if (!user) {
@@ -127,67 +108,32 @@ class UserService {
 			);
 		}
 
-		const { roles, ...restUserData } = userData;
+		delete userData.password;
+
+		const { role, ...restUserData } = userData;
 		Object.assign(user, restUserData);
 
-		let savedUser: User;
-		try {
-			savedUser = await this.userRepository.save(user);
-		} catch (error) {
-			console.error('Database error while saving user:', error);
-			throw new InternalServerErrorException(
-				'Failed to create user due to a server error',
-				'UserCreationError',
-			);
-		}
-
-		if (roles && Array.isArray(roles) && roles.length > 0) {
-			const existingRoles = user.roles || [];
-
-			const rolesToAdd = roles?.filter(
-				(role: Role) =>
-					!existingRoles.some((existingRole) => existingRole.id === role.id),
-			);
-
-			const rolesToRemove = existingRoles.filter(
-				(existingRole) =>
-					!roles.some(
-						(requestedRole: Role) => requestedRole.id === existingRole.id,
-					),
-			);
-
-			if (rolesToRemove.length > 0) {
-				try {
-					await this.userRoleRepository.delete(
-						rolesToRemove.map((role) => ({
-							user: { id: userId },
-							role: { id: role.id },
-						})) as any,
+		if (role && role.id) {
+			if (role.id !== user.roleId) {
+				const updatedRole = await this.roleService.findOne(Number(role.id));
+				if (!updatedRole) {
+					throw new BadRequestException(
+						'Invalid Role ID provided',
+						'InvalidRoleID',
 					);
-				} catch (error) {
-					console.error('Database error while removing user roles:', error);
 				}
+				user.role = updatedRole;
 			}
-
-			if (rolesToAdd.length > 0) {
-				try {
-					const userRolesToInsert = rolesToAdd.map((role: Role) => {
-						const userRole = new UserRole();
-						userRole.user = savedUser;
-						userRole.role = role;
-						return userRole;
-					});
-					await this.userRoleRepository.save(userRolesToInsert);
-				} catch (error) {
-					console.error('Database error while adding user roles:', error);
-				}
-			}
-			const updatedUser = await this.findUserById(userId);
-
-			Object.assign(savedUser, updatedUser);
 		}
 
-		return savedUser;
+		const updatedUser = await this.userRepository.save(user);
+
+		return {
+			id: updatedUser.id,
+			email: updatedUser.email,
+			...restUserData,
+			role: { id: updatedUser.role.id, name: updatedUser.role.name },
+		};
 	}
 
 	public async remove(userId: number): Promise<void> {

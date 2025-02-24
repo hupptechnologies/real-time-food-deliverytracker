@@ -2,12 +2,10 @@ import {
 	Entity,
 	PrimaryGeneratedColumn,
 	Column,
-	ManyToMany,
-	JoinTable,
-	OneToMany,
+	ManyToOne,
+	JoinColumn,
 } from 'typeorm';
 import { Role } from '../../role/entities/role.entity';
-import { UserRole } from './user_role.entity';
 
 @Entity('users')
 export class User {
@@ -38,14 +36,10 @@ export class User {
 	})
 	updatedAt!: Date;
 
-	@OneToMany(() => UserRole, (userRole) => userRole.user)
-	userRoles!: UserRole[];
+	@Column({ name: 'role_id' })
+	roleId!: number;
 
-	@ManyToMany(() => Role, (role) => role.users)
-	@JoinTable({
-		name: 'users_roles',
-		joinColumn: { name: 'user_id', referencedColumnName: 'id' },
-		inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
-	})
-	roles?: Role[];
+	@ManyToOne(() => Role, (role) => role.users)
+	@JoinColumn({ name: 'role_id' })
+	role!: Role;
 }

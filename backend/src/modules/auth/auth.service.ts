@@ -3,6 +3,7 @@ import * as jwt from 'jsonwebtoken';
 import UnauthorizedException from '../../exceptions/unauthorized.exception';
 import InternalServerErrorException from '../../exceptions/internal-server-error.exception';
 import UserService from '../user/user.service';
+import { User } from '../user/entites/user.entity';
 
 class AuthService {
 	private userService: UserService;
@@ -30,16 +31,19 @@ class AuthService {
 		return { token, newUser };
 	}
 
-	public async loginUser(loginData: any): Promise<string> {
+	public async loginUser(
+		loginData: any,
+	): Promise<{ token: string; user: User }> {
 		const user = await this.userService.findByEmail(loginData.email);
 
 		if (!user) {
 			throw new UnauthorizedException('Invalid credentials', 'LoginError');
 		}
 
+		const { password, ...restUserData } = user;
 		const passwordsMatched = await bcrypt.compare(
 			loginData.password,
-			user.password!,
+			password!,
 		);
 
 		if (!passwordsMatched) {
@@ -52,7 +56,8 @@ class AuthService {
 		};
 
 		const token = this.generateJwtToken(tokenPayload);
-		return token;
+
+		return { token, user: restUserData };
 	}
 
 	private generateJwtToken(payload: object): string {
