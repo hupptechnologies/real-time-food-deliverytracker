@@ -4,7 +4,6 @@ import NextAuth, {
 } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { JWT as NextAuthJWT } from 'next-auth/jwt';
-import { User, Session, JWT, Role } from '@/types/auth';
 
 const authOptions: NextAuthOptions = {
 	secret: process.env.NEXTAUTH_SECRET,
@@ -16,7 +15,7 @@ const authOptions: NextAuthOptions = {
 				password: { label: 'Password', type: 'password' },
 			},
 			async authorize(credentials) {
-				if (!credentials?.email || !credentials?.password) {
+				if (!credentials) {
 					return null;
 				}
 
@@ -30,8 +29,9 @@ const authOptions: NextAuthOptions = {
 							password: credentials.password,
 						}),
 					});
-
 					const responseData: any = await res.json();
+
+					const token = getTokenFromCookies(res);
 
 					if (res.ok && responseData.success && responseData.data) {
 						const userData = responseData.data;
@@ -44,16 +44,16 @@ const authOptions: NextAuthOptions = {
 							roleData.id &&
 							roleData.name
 						) {
-							const role: Role = {
+							const role = {
 								id: roleData.id,
 								name: roleData.name,
 							};
-							const user: User = {
+							const user = {
 								id: String(userData.id),
 								role: role,
-								name: userData.email,
+								name: userData.name,
 								email: userData.email,
-								accessToken: responseData.data.token || responseData.token,
+								accessToken: token,
 							};
 							return user;
 						} else {
@@ -79,19 +79,19 @@ const authOptions: NextAuthOptions = {
 			token: NextAuthJWT;
 		}) {
 			if (session.user && token.role) {
-				(session as Session).user!.role = token.role as Role;
+				session.user!.role = token.role;
 			}
 			if (token.accessToken) {
-				(session as Session).accessToken = token.accessToken as string;
+				session.accessToken = token.accessToken as string;
 			}
-			return session as Session;
+			return session;
 		},
-		async jwt({ token, user }: { token: NextAuthJWT; user?: User }) {
+		async jwt({ token, user }) {
 			if (user && user.role) {
-				(token as JWT).role = user.role as Role;
+				token.role = user.role;
 			}
 			if (user && user.accessToken) {
-				(token as JWT).accessToken = user.accessToken as string;
+				token.accessToken = user.accessToken;
 			}
 			return token;
 		},
@@ -105,3 +105,12 @@ const authOptions: NextAuthOptions = {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
+
+function getTokenFromCookies(res: Response) {
+	const token = res.headers
+		.getSetCookie()?.[0]
+		?.split(';')
+		.find((cookie: string) => cookie.startsWith('authToken='))
+		?.split('=')[1];
+	return token;
+}

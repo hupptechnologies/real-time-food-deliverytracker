@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { LuEye, LuEyeOff } from 'react-icons/lu';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 export default function SignUp() {
 	const [showPassword, setShowPassword] = useState(false);
@@ -11,8 +13,40 @@ export default function SignUp() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const router = useRouter();
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+
+		try {
+			const response = await fetch('/api/register', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ name, email, password }),
+			});
+
+			const data = await response.json();
+
+			if (!response.ok || !data.success) {
+				// TODO: Display error message
+			}
+
+			// Auto-login
+			const result = await signIn('credentials', {
+				email,
+				password,
+				redirect: false,
+			});
+
+			if (!result?.error) {
+				router.push('/');
+			}
+		} catch (apiError: any) {
+			// eslint-disable-next-line no-console
+			console.error('Frontend signup error:', apiError);
+			// TODO: Display error message
+		}
 	};
 
 	return (
@@ -71,6 +105,7 @@ export default function SignUp() {
 									onChange={(e) => setEmail(e.target.value)}
 									className="block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
 									required
+									autoComplete="username"
 								/>
 							</div>
 

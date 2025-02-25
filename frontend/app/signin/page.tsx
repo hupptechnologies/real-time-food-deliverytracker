@@ -5,20 +5,17 @@ import { LuEye, LuEyeOff } from 'react-icons/lu';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { getSession, signIn } from 'next-auth/react';
-import { User } from '@/types/auth';
+import { signIn } from 'next-auth/react';
 
 export default function SignIn() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [rememberMe, setRememberMe] = useState(false);
-	// const [error, setError] = useState('');
 	const router = useRouter();
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
-		// setError('');
 
 		const result = await signIn('credentials', {
 			email,
@@ -26,22 +23,8 @@ export default function SignIn() {
 			redirect: false,
 		});
 
-		if (result?.error) {
-			// setError(result.error);
-		} else {
-			const session = await getSession();
-			const userData = session?.user as User;
-			const { role } = userData;
-
-			if (role?.name === 'admin') {
-				router.push('/admin/dashboard');
-			} else if (role?.name === 'restaurant') {
-				router.push('/restaurant/dashboard');
-			} else if (role?.name === 'driver') {
-				router.push('/driver/dashboard');
-			} else {
-				router.push('/');
-			}
+		if (!result?.error) {
+			router.push('/');
 		}
 	};
 
