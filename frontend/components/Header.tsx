@@ -11,16 +11,16 @@ import {
 	LuLogOut,
 	LuSettings,
 	LuSearch,
-	LuShoppingBag,
 } from 'react-icons/lu';
 import { signOut, useSession } from 'next-auth/react';
+import Logo from './Logo';
 
 export default function Header() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isProfileOpen, setIsProfileOpen] = useState(false);
 
 	const handleLogout = () => {
-		signOut();
+		signOut({ callbackUrl: '/' });
 	};
 
 	const session = useSession();
@@ -38,12 +38,7 @@ export default function Header() {
 				<div className="flex h-16 items-center justify-between">
 					{/* Logo and Main Navigation */}
 					<div className="flex items-center">
-						<Link href="/" className="flex items-center space-x-2">
-							<LuShoppingBag className="h-8 w-8 text-red-500" />
-							<span className="text-xl font-bold text-gray-900">
-								DeliveryGo
-							</span>
-						</Link>
+						<Logo />
 
 						{/* Desktop Navigation */}
 						<div className="ml-10 hidden space-x-8 md:flex">

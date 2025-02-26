@@ -15,7 +15,7 @@ export async function middleware(req: NextRequest) {
 function getDashboardPath(session: any) {
 	switch (session?.role?.name?.toLowerCase()) {
 		case 'admin':
-			return '/admin/dashboard';
+			return '/admin';
 		case 'restaurant':
 			return '/restaurant/dashboard';
 		case 'driver':

@@ -1,18 +1,22 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { getServerSession } from 'next-auth';
+import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { LuSearch, LuClock4, LuMapPin, LuStar } from 'react-icons/lu';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
-export default async function Home() {
-	const session = await getServerSession();
+export default function Home() {
+	const session = useSession();
+
 	if (session) {
-		const userRole = session.user?.role;
-		switch (userRole) {
+		const userRole = session.data?.user?.role;
+
+		switch (userRole?.name) {
 			case 'admin':
-				redirect('/admin/dashboard');
+				redirect('/admin');
 			case 'driver':
 				redirect('/driver/dashboard');
 			case 'restaturant':

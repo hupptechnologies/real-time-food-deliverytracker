@@ -44,7 +44,7 @@ export default function SignUp() {
 			}
 		} catch (apiError: any) {
 			// eslint-disable-next-line no-console
-			console.error('Frontend signup error:', apiError);
+			console.error('Signup error:', apiError);
 			// TODO: Display error message
 		}
 	};
