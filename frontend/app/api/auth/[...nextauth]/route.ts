@@ -5,7 +5,7 @@ import NextAuth, {
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { JWT as NextAuthJWT } from 'next-auth/jwt';
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
 	secret: process.env.NEXTAUTH_SECRET,
 	providers: [
 		CredentialsProvider({
