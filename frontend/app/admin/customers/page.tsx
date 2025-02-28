@@ -181,7 +181,7 @@ export default async function CustomersPage() {
 				</CardContent>
 			</Card>
 
-			<CustomersTable customers={customers} />
+			<CustomersTable customers={customers} roles={roles} />
 		</div>
 	);
 }

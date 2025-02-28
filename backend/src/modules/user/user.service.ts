@@ -113,9 +113,9 @@ class UserService {
 		const { role, ...restUserData } = userData;
 		Object.assign(user, restUserData);
 
-		if (role && role.id) {
-			if (role.id !== user.roleId) {
-				const updatedRole = await this.roleService.findOne(Number(role.id));
+		if (role) {
+			if (role !== user.roleId) {
+				const updatedRole = await this.roleService.findOne(Number(role));
 				if (!updatedRole) {
 					throw new BadRequestException(
 						'Invalid Role ID provided',
