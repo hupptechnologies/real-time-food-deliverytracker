@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 'use client';
 
 import {
@@ -10,6 +9,7 @@ import {
 	getPaginationRowModel,
 	useReactTable,
 	ColumnFiltersState,
+	getFilteredRowModel,
 } from '@tanstack/react-table';
 import {
 	Table,
@@ -39,12 +39,13 @@ import {
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
-	searchKey: string;
+	searchKey?: string;
 	filterOptions?: {
 		key: string;
 		title: string;
 		options: { label: string; value: string }[];
 	};
+	disablePagination?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -52,14 +53,11 @@ export function DataTable<TData, TValue>({
 	data,
 	searchKey,
 	filterOptions,
+	disablePagination = false,
 }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [globalFilter, setGlobalFilter] = useState('');
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
-	console.log('### columns ###', columns);
-	console.log('### data ###', data);
-	console.log('### globalFilter ###', globalFilter);
 
 	const table = useReactTable({
 		data,
@@ -76,13 +74,14 @@ export function DataTable<TData, TValue>({
 			if (!filterValue || filterValue === '') {
 				return true;
 			}
-			const cellValue = row.getValue(searchKey) as string;
+			const cellValue = row.getValue(searchKey!) as string;
 			if (typeof cellValue === 'string') {
 				return cellValue.toLowerCase().includes(filterValue.toLowerCase());
 			}
 			return false;
 		},
 		getCoreRowModel: getCoreRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 	});
@@ -90,12 +89,14 @@ export function DataTable<TData, TValue>({
 	return (
 		<div>
 			<div className="flex items-center justify-between py-4">
-				<Input
-					placeholder={`Search ${searchKey}...`}
-					value={globalFilter}
-					onChange={(e) => setGlobalFilter(e.target.value)}
-					className="max-w-sm"
-				/>
+				{searchKey && searchKey.length !== 0 && (
+					<Input
+						placeholder={`Search ${searchKey}...`}
+						value={globalFilter}
+						onChange={(e) => setGlobalFilter(e.target.value)}
+						className="max-w-sm"
+					/>
+				)}
 
 				{filterOptions && (
 					<DropdownMenu>
@@ -180,46 +181,48 @@ export function DataTable<TData, TValue>({
 				</Table>
 			</div>
 
-			<div className="flex items-center justify-end space-x-2 py-4">
-				<div className="flex-1 text-sm text-muted-foreground">
-					{table.getFilteredSelectedRowModel().rows.length} of{' '}
-					{table.getFilteredRowModel().rows.length} row(s) selected.
+			{!disablePagination && (
+				<div className="flex items-center justify-end space-x-2 py-4">
+					<div className="flex-1 text-sm text-muted-foreground">
+						{table.getFilteredSelectedRowModel().rows.length} of{' '}
+						{table.getFilteredRowModel().rows.length} row(s) selected.
+					</div>
+					<div className="space-x-2">
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => table.setPageIndex(0)}
+							disabled={!table.getCanPreviousPage()}
+						>
+							<ChevronsLeft className="h-4 w-4" />
+						</Button>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => table.previousPage()}
+							disabled={!table.getCanPreviousPage()}
+						>
+							<ChevronLeft className="h-4 w-4" />
+						</Button>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => table.nextPage()}
+							disabled={!table.getCanNextPage()}
+						>
+							<ChevronRight className="h-4 w-4" />
+						</Button>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+							disabled={!table.getCanNextPage()}
+						>
+							<ChevronsRight className="h-4 w-4" />
+						</Button>
+					</div>
 				</div>
-				<div className="space-x-2">
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => table.setPageIndex(0)}
-						disabled={!table.getCanPreviousPage()}
-					>
-						<ChevronsLeft className="h-4 w-4" />
-					</Button>
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => table.previousPage()}
-						disabled={!table.getCanPreviousPage()}
-					>
-						<ChevronLeft className="h-4 w-4" />
-					</Button>
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => table.nextPage()}
-						disabled={!table.getCanNextPage()}
-					>
-						<ChevronRight className="h-4 w-4" />
-					</Button>
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-						disabled={!table.getCanNextPage()}
-					>
-						<ChevronsRight className="h-4 w-4" />
-					</Button>
-				</div>
-			</div>
+			)}
 		</div>
 	);
 }
