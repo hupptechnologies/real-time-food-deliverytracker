@@ -12,7 +12,44 @@ import CustomerStats from './_components/CustomerStats';
 import CustomersTable from './_components/CustomersTable';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { AddCustomerDialog } from './_components/AddCustomerDialog';
-import { Customer } from '@/types/customer';
+import { Customer, Role } from '@/types/customer';
+
+const fetchRoles = async (token: string): Promise<Role[]> => {
+	try {
+		const baseUrl = process.env.NEXT_API_URL;
+		if (!baseUrl) {
+			// eslint-disable-next-line no-console
+			console.log('### API URL not found ###');
+			throw new Error('Failed to fetch roles');
+		}
+
+		const response = await fetch(`${baseUrl}/roles`, {
+			method: 'GET',
+			headers: {
+				Authorization: `Barear ${token}`,
+				'Content-Type': 'application/json',
+			},
+			cache: 'force-cache',
+		});
+
+		if (!response.ok) {
+			throw new Error('Failed to fetch roles!');
+		}
+
+		const responseData = await response.json();
+
+		if (!responseData.success) {
+			const errorMessage = responseData?.message || 'Failed to fetch roles!';
+			throw new Error(errorMessage);
+		}
+
+		return responseData.data;
+	} catch (error: any) {
+		// eslint-disable-next-line no-console
+		console.error('### Error ###', error);
+		throw new Error(error?.message || error);
+	}
+};
 
 const fetchCustomers = async (token: string): Promise<Customer[]> => {
 	try {
@@ -59,6 +96,7 @@ export default async function CustomersPage() {
 	}
 
 	const customers: Customer[] = await fetchCustomers(session.accessToken);
+	const roles: Role[] = await fetchRoles(session.accessToken);
 	const stats = [
 		{
 			name: 'Total Customers',
@@ -95,7 +133,7 @@ export default async function CustomersPage() {
 			{/* Page header */}
 			<div className="flex items-center justify-between">
 				<h1 className="text-2xl font-semibold text-gray-900">Customers</h1>
-				<AddCustomerDialog />
+				<AddCustomerDialog roles={roles} />
 			</div>
 
 			{/* Stats cards */}

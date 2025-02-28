@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { Loader2, Plus, UserRoundPlus } from 'lucide-react';
+import { Loader2, Plus, ShieldPlus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
@@ -22,46 +22,37 @@ import {
 	FormControl,
 	FormMessage,
 } from '@/components/ui/form';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { addCustomerSchema, addCustomerSchemaType } from '@/schema/customer';
-import { AddCustomer } from '@/app/actions/admin/addCustomer';
-import { capitalizeFirstLetter } from '@/utils/capitalizeFirstLetter';
-import { Role } from '@/types/customer';
+import { roleSchema, roleSchemaType } from '@/schema/customer';
+import { AddRole } from '@/app/actions/admin/addRole';
 
-export function AddCustomerDialog({ roles }: { roles: Role[] }) {
+export function AddRoleDialog() {
 	const [open, setOpen] = useState<boolean>(false);
 
-	const form = useForm<addCustomerSchemaType>({
-		resolver: zodResolver(addCustomerSchema),
-		defaultValues: { role: 2 },
+	const form = useForm<roleSchemaType>({
+		resolver: zodResolver(roleSchema),
+		defaultValues: {},
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: AddCustomer,
+		mutationFn: AddRole,
 		onSuccess: () => {
-			toast.success('Customer added', { id: 'add-customer' });
+			toast.success('Role added', { id: 'add-role' });
 		},
 		onError: (error) => {
 			if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
-				toast.success('Customer added', { id: 'add-customer' });
+				toast.success('Role added', { id: 'add-role' });
 				return;
 			}
-			toast.error('Something went wrong!', { id: 'add-customer' });
+			toast.error('Something went wrong!', { id: 'add-role' });
 		},
 	});
 
 	const onSubmit = useCallback(
-		(values: addCustomerSchemaType) => {
-			toast.loading('Adding customer....', { id: 'add-customer' });
-			mutate({ ...values, role: Number(values.role) });
+		(values: roleSchemaType) => {
+			toast.loading('Adding Role....', { id: 'add-role' });
+			mutate(values);
 		},
 		[mutate],
 	);
@@ -77,15 +68,15 @@ export function AddCustomerDialog({ roles }: { roles: Role[] }) {
 			<DialogTrigger asChild>
 				<Button className="bg-red-500 hover:bg-red-600">
 					<Plus className="mr-2 h-4 w-4" />
-					Add Customer
+					Add Role
 				</Button>
 			</DialogTrigger>
 			<DialogContent>
 				<DialogHeader className="py-6">
 					<DialogTitle asChild>
 						<div className="flex flex-col items-center gap-2">
-							<UserRoundPlus className={'stroke-primary'} />
-							<p className="text-xl text-primary">Add customer</p>
+							<ShieldPlus className={'stroke-primary'} />
+							<p className="text-xl text-primary">Add Role</p>
 						</div>
 					</DialogTitle>
 					<Separator />
@@ -114,45 +105,15 @@ export function AddCustomerDialog({ roles }: { roles: Role[] }) {
 							/>
 							<FormField
 								control={form.control}
-								name="email"
+								name="description"
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel className="flex items-center gap-1">
-											Email
-											<p className="text-xs text-primary">(required)</p>
+											Description
 										</FormLabel>
 										<FormControl>
 											<Input {...field} />
 										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="role"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel className="flex items-center gap-1">
-											Role
-										</FormLabel>
-										<Select
-											onValueChange={(value) => field.onChange(Number(value))}
-											defaultValue="2"
-										>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder="Select a role" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{roles.map((role) => (
-													<SelectItem key={role.id} value={String(role.id)}>
-														{capitalizeFirstLetter(role.name)}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
 										<FormMessage />
 									</FormItem>
 								)}
@@ -163,7 +124,7 @@ export function AddCustomerDialog({ roles }: { roles: Role[] }) {
 								disabled={isPending}
 							>
 								{isPending && <Loader2 className="animate-spin" />}
-								{!isPending && 'Add customer'}
+								{!isPending && 'Add Role'}
 							</Button>
 						</form>
 					</Form>
