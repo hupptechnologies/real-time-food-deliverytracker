@@ -2,8 +2,8 @@ export interface Role {
 	id: number;
 	name: string;
 	description?: string;
-	createdAt?: Date;
-	updatedAt?: Date;
+	created_at?: Date;
+	updated_at?: Date;
 }
 
 export interface Customer {
@@ -11,6 +11,6 @@ export interface Customer {
 	name: string;
 	email: string;
 	role: number | Role;
-	createdAt: Date;
-	updatedAt: Date;
+	created_at: Date;
+	updated_at: Date;
 }

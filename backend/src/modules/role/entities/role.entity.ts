@@ -16,14 +16,14 @@ export class Role {
 		type: 'timestamp with time zone',
 		default: () => 'CURRENT_TIMESTAMP',
 	})
-	createdAt!: Date;
+	created_at!: Date;
 
 	@Column({
 		type: 'timestamp with time zone',
 		default: () => 'CURRENT_TIMESTAMP',
 		onUpdate: 'CURRENT_TIMESTAMP',
 	})
-	updatedAt!: Date;
+	updated_at!: Date;
 
 	@OneToMany(() => User, (user) => user.role)
 	users?: User[];

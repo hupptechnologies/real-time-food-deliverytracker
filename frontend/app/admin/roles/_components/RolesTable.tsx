@@ -77,10 +77,10 @@ function getColumns({ setRowAction }: GetColumnsProps): ColumnDef<Role>[] {
 			header: 'Description',
 		},
 		{
-			accessorKey: 'createdAt',
+			accessorKey: 'created_at',
 			header: 'Created',
 			cell: ({ row }) => {
-				const date = new Date(row.getValue('createdAt'));
+				const date = new Date(row.getValue('created_at'));
 				return date.toLocaleDateString('en-US', {
 					year: 'numeric',
 					month: 'long',

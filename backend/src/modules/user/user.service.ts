@@ -90,8 +90,8 @@ class UserService {
 				'name',
 				'email',
 				'password',
-				'createdAt',
-				'updatedAt',
+				'created_at',
+				'updated_at',
 				'role',
 			],
 		});

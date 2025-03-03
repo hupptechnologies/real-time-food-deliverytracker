@@ -5,6 +5,7 @@ export class AddRoleFkUsersTable1740395399655 implements MigrationInterface {
 		await queryRunner.createForeignKey(
 			'users',
 			new TableForeignKey({
+				name: 'FK_users_roles',
 				columnNames: ['role_id'],
 				referencedColumnNames: ['id'],
 				referencedTableName: 'roles',

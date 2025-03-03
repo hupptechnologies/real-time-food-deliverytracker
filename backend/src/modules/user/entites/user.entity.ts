@@ -22,19 +22,17 @@ export class User {
 	name?: string;
 
 	@Column({
-		name: 'created_at',
 		type: 'timestamp with time zone',
 		default: () => 'CURRENT_TIMESTAMP',
 	})
-	createdAt!: Date;
+	created_at!: Date;
 
 	@Column({
-		name: 'updated_at',
 		type: 'timestamp with time zone',
 		default: () => 'CURRENT_TIMESTAMP',
 		onUpdate: 'CURRENT_TIMESTAMP',
 	})
-	updatedAt!: Date;
+	updated_at!: Date;
 
 	@Column({ name: 'role_id' })
 	roleId!: number;
