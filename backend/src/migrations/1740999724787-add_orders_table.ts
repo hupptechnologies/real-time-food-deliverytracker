@@ -55,6 +55,14 @@ export class AddOrdersTable1740999724787 implements MigrationInterface {
 						isUnique: true,
 					},
 					{
+						name: 'order_total',
+						type: 'decimal',
+						precision: 10,
+						scale: 2,
+						isNullable: false,
+						default: 0,
+					},
+					{
 						name: 'created_at',
 						type: 'timestamp with time zone',
 						default: 'CURRENT_TIMESTAMP',

@@ -11,8 +11,7 @@ const orderController = new OrderController(orderService);
 router.use(authenticateMiddleware([Roles.USER]));
 
 router.post('/', orderController.create.bind(orderController));
-router.get('/', orderController.findAll.bind(orderController));
+router.get('/history', orderController.findAll.bind(orderController));
 router.get('/:id', orderController.findOne.bind(orderController));
-router.put('/:id', orderController.update.bind(orderController));
-
+router.put('/:id/cancel', orderController.update.bind(orderController));
 export default router;

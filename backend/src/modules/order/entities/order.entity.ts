@@ -11,6 +11,9 @@ export class Order {
 	@Column({ nullable: false })
 	customer_id!: number;
 
+	@Column({ nullable: false })
+	address: string;
+
 	@Column({ nullable: true })
 	driver_id?: number;
 
@@ -28,6 +31,15 @@ export class Order {
 
 	@Column({ nullable: false, unique: true })
 	order_number: string;
+
+	@Column({
+		type: 'decimal',
+		precision: 10,
+		scale: 2,
+		nullable: false,
+		default: 0,
+	})
+	order_total!: number;
 
 	@Column({
 		type: 'timestamp with time zone',
