@@ -23,10 +23,39 @@ class OrderController {
 		}
 	}
 
-	public async update(req: Request, res: Response, next: NextFunction) {}
-	public async findOne(req: Request, res: Response, next: NextFunction) {}
-	public async findAll(req: Request, res: Response, next: NextFunction) {}
-	public async remove(req: Request, res: Response, next: NextFunction) {}
+	public async findHistory(req: Request, res: Response, next: NextFunction) {
+		try {
+			const userId = req.user?.id as number;
+			const orderHistory = await this.orderService.findHistory(userId);
+			ApiResponse(
+				res,
+				HttpStatus.OK,
+				true,
+				'Order history fetched successfully!',
+				orderHistory,
+			);
+		} catch (error: any) {
+			next(error);
+		}
+	}
+
+	public async findOne(req: Request, res: Response, next: NextFunction) {
+		try {
+			const { id: orderId } = req.params;
+			const userId = req.user?.id as number;
+			const order = await this.orderService.findOne(orderId, userId);
+			ApiResponse(
+				res,
+				HttpStatus.OK,
+				true,
+				'Order details fetched successfully!',
+				order,
+			);
+		} catch (error) {
+			next(error);
+		}
+	}
+	public async cancel(req: Request, res: Response, next: NextFunction) {}
 }
 
 export default OrderController;

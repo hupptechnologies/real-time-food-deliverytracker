@@ -5,6 +5,7 @@ import { OrderStatus } from '../../constants/order-status';
 import BadRequestException from '../../exceptions/bad-request.exception';
 import { OrderHistory } from './entities/order_history.entity';
 import InternalServerErrorException from '../../exceptions/internal-server-error.exception';
+import NotFoundException from '../../exceptions/not-found.exception';
 
 class OrderService {
 	private orderRepository = AppDataSource.getRepository(Order);
@@ -54,6 +55,29 @@ class OrderService {
 		await this.orderHistoryRepository.save(newHistory);
 
 		return savedOrder;
+	}
+
+	public async findHistory(userId: number): Promise<Order[]> {
+		const history = await this.orderRepository.find({
+			where: { customer_id: userId },
+		});
+
+		return history;
+	}
+
+	public async findOne(orderId: string, userId: number): Promise<Order> {
+		const order = await this.orderRepository.findOne({
+			where: {
+				id: orderId,
+				customer_id: userId,
+			},
+		});
+
+		if (!order) {
+			throw new NotFoundException(`Order with ID ${orderId} not found!`);
+		}
+
+		return order;
 	}
 }
 
