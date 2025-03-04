@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import AuthService from './auth.service';
 import { ApiResponse } from '../../utils/response';
 import { HttpStatus } from '../../constants/http-status';
+import { authMessages } from '../../constants/messages';
 
 class AuthController {
 	private authService: AuthService;
@@ -24,7 +25,7 @@ class AuthController {
 				res,
 				HttpStatus.CREATED,
 				true,
-				'User registerd successfully!',
+				authMessages.REGISTER_SUCCESS,
 				newUser,
 			);
 		} catch (error: any) {
@@ -42,7 +43,7 @@ class AuthController {
 			const { token, user } = await this.authService.loginUser(loginData);
 
 			this.setJwtCookie(res, token);
-			ApiResponse(res, HttpStatus.OK, true, 'Logged in successfully', user);
+			ApiResponse(res, HttpStatus.OK, true, authMessages.LOGIN_SUCCESS, user);
 		} catch (error: any) {
 			next(error);
 		}

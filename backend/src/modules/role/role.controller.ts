@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import RolesService from './role.service';
 import { ApiResponse } from '../../utils/response';
 import { HttpStatus } from '../../constants/http-status';
+import { roleMessages } from '../../constants/messages';
 
 class RolesController {
 	private rolesService: RolesService;
@@ -14,7 +15,13 @@ class RolesController {
 		try {
 			const body = req.body;
 			const newRole = await this.rolesService.create(body);
-			ApiResponse(res, HttpStatus.CREATED, true, 'New Role added!', newRole);
+			ApiResponse(
+				res,
+				HttpStatus.CREATED,
+				true,
+				roleMessages.CREATE_SUCCESS,
+				newRole,
+			);
 		} catch (error: any) {
 			next(error);
 		}
@@ -28,7 +35,13 @@ class RolesController {
 				parseInt(roleId, 10),
 				body,
 			);
-			ApiResponse(res, HttpStatus.OK, true, 'Role updated!', updatedRole);
+			ApiResponse(
+				res,
+				HttpStatus.OK,
+				true,
+				roleMessages.UPDATE_SUCCESS,
+				updatedRole,
+			);
 		} catch (error: any) {
 			next(error);
 		}
@@ -42,7 +55,7 @@ class RolesController {
 				res,
 				HttpStatus.OK,
 				true,
-				'Role details fetched successfully!',
+				roleMessages.DETAIL_FETCH_SUCCESS,
 				role,
 			);
 		} catch (error: any) {
@@ -57,7 +70,7 @@ class RolesController {
 				res,
 				HttpStatus.OK,
 				true,
-				'Roles fetched successfully!',
+				roleMessages.LIST_FETCH_SUCCESS,
 				roles,
 			);
 		} catch (error: any) {
@@ -69,7 +82,7 @@ class RolesController {
 		try {
 			const { id: roleId } = req.params;
 			await this.rolesService.delete(parseInt(roleId, 10));
-			ApiResponse(res, HttpStatus.OK, true, 'Role deleted!');
+			ApiResponse(res, HttpStatus.OK, true, roleMessages.DELETE_SUCCESS);
 		} catch (error: any) {
 			next(error);
 		}

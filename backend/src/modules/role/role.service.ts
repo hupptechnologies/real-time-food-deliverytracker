@@ -3,6 +3,7 @@ import { AppDataSource } from '../../config/database.config';
 import NotFoundException from '../../exceptions/not-found.exception';
 import BadRequestException from '../../exceptions/bad-request.exception';
 import { Role } from './entities/role.entity';
+import { roleMessages } from '../../constants/messages';
 
 class RolesService {
 	private roleRepository = AppDataSource.getRepository(Role);
@@ -13,7 +14,7 @@ class RolesService {
 		});
 		if (existingRole) {
 			throw new BadRequestException(
-				'Role with this name already exists',
+				roleMessages.DUPLECATE_ROLE_NAME,
 				'DuplicateRoleName',
 			);
 		}
@@ -34,7 +35,7 @@ class RolesService {
 		const role = await this.roleRepository.findOneBy({ id: roleId });
 		if (!role) {
 			throw new NotFoundException(
-				`Role with ID ${roleId} not found`,
+				`${roleMessages.NOT_FOUND} ${roleId}`,
 				'RoleNotFound',
 			);
 		}

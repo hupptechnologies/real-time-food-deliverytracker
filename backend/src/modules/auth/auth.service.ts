@@ -4,6 +4,7 @@ import UnauthorizedException from '../../exceptions/unauthorized.exception';
 import InternalServerErrorException from '../../exceptions/internal-server-error.exception';
 import UserService from '../user/user.service';
 import { User } from '../user/entites/user.entity';
+import { authMessages } from '../../constants/messages';
 
 class AuthService {
 	private userService: UserService;
@@ -37,7 +38,10 @@ class AuthService {
 		const user = await this.userService.findByEmail(loginData.email);
 
 		if (!user) {
-			throw new UnauthorizedException('Invalid credentials', 'LoginError');
+			throw new UnauthorizedException(
+				authMessages.INVALID_CREDENTIALS,
+				'LoginError',
+			);
 		}
 
 		const { password, ...restUserData } = user;
@@ -47,7 +51,10 @@ class AuthService {
 		);
 
 		if (!passwordsMatched) {
-			throw new UnauthorizedException('Invalid credentials', 'LoginError');
+			throw new UnauthorizedException(
+				authMessages.INVALID_CREDENTIALS,
+				'LoginError',
+			);
 		}
 
 		const tokenPayload = {

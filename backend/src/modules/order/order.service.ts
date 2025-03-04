@@ -6,6 +6,7 @@ import BadRequestException from '../../exceptions/bad-request.exception';
 import { OrderHistory } from './entities/order_history.entity';
 import InternalServerErrorException from '../../exceptions/internal-server-error.exception';
 import NotFoundException from '../../exceptions/not-found.exception';
+import { orderMessages } from '../../constants/messages';
 
 class OrderService {
 	private orderRepository = AppDataSource.getRepository(Order);
@@ -21,9 +22,7 @@ class OrderService {
 		});
 
 		if (isDuplicateOrder) {
-			throw new BadRequestException(
-				'Order with this Order Number already exist',
-			);
+			throw new BadRequestException(orderMessages.DUPLECATE_ORDER_NUMBER);
 		}
 
 		const order = new Order();
@@ -44,11 +43,11 @@ class OrderService {
 		// TODO: Process Order Items
 
 		if (!savedOrder) {
-			throw new InternalServerErrorException('Failed to initiate order!');
+			throw new InternalServerErrorException(orderMessages.INIT_FAILED);
 		}
 
 		const newHistory = new OrderHistory();
-		newHistory.status = 'init';
+		newHistory.status = OrderStatus.INIT;
 		newHistory.order_id = savedOrder.id;
 		newHistory.order = savedOrder;
 
@@ -74,7 +73,7 @@ class OrderService {
 		});
 
 		if (!order) {
-			throw new NotFoundException(`Order with ID ${orderId} not found!`);
+			throw new NotFoundException(`${orderMessages.NOT_FOUND} ${orderId}`);
 		}
 
 		return order;

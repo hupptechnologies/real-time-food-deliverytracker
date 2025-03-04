@@ -5,6 +5,7 @@ import InternalServerErrorException from '../../exceptions/internal-server-error
 import RolesService from '../role/role.service';
 import NotFoundException from '../../exceptions/not-found.exception';
 import BadRequestException from '../../exceptions/bad-request.exception';
+import { userMessage } from '../../constants/messages';
 
 class UserService {
 	private userRepository = AppDataSource.getRepository(User);
@@ -20,7 +21,7 @@ class UserService {
 		const existingUser = await this.findByEmail(restUserData.email);
 		if (existingUser) {
 			throw new BadRequestException(
-				'An account with this email already exist',
+				userMessage.DUPLICATE_EMAIL,
 				'DuplicateUser',
 			);
 		}
@@ -39,7 +40,7 @@ class UserService {
 			assignedRole = await this.roleService.findOne(Number(role));
 			if (!assignedRole) {
 				throw new BadRequestException(
-					'Invalid Role ID provided',
+					userMessage.INVALID_ROLE_ID,
 					'InvalidRoleID',
 				);
 			}
@@ -50,7 +51,7 @@ class UserService {
 			} else {
 				console.warn('Default "user" role not found in database.');
 				throw new InternalServerErrorException(
-					'Failed to create the account, default role not found',
+					userMessage.DEFAULT_ROLE_NOT_FOUND,
 				);
 			}
 		}
@@ -102,10 +103,7 @@ class UserService {
 		const user = await this.findUserById(userId);
 
 		if (!user) {
-			throw new NotFoundException(
-				`User not found with ${userId} ID`,
-				'UserNotFound',
-			);
+			throw new NotFoundException(userMessage.NOT_FOUND, 'UserNotFound');
 		}
 
 		delete userData.password;
@@ -118,7 +116,7 @@ class UserService {
 				const updatedRole = await this.roleService.findOne(Number(role));
 				if (!updatedRole) {
 					throw new BadRequestException(
-						'Invalid Role ID provided',
+						userMessage.INVALID_ROLE_ID,
 						'InvalidRoleID',
 					);
 				}
@@ -140,10 +138,7 @@ class UserService {
 		const user = await this.findUserById(userId);
 
 		if (!user) {
-			throw new NotFoundException(
-				`User not found with ${userId} ID`,
-				'UserNotFound',
-			);
+			throw new NotFoundException(userMessage.NOT_FOUND, 'UserNotFound');
 		}
 
 		await this.userRepository.remove(user);

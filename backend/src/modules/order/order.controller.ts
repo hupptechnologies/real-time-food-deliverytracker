@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import OrderService from './order.service';
 import { ApiResponse } from '../../utils/response';
 import { HttpStatus } from '../../constants/http-status';
+import { orderMessages } from '../../constants/messages';
 
 class OrderController {
 	private orderService: OrderService;
@@ -17,7 +18,13 @@ class OrderController {
 			payload.customer_id = req?.user?.id;
 
 			const newOrder = await this.orderService.create(payload);
-			ApiResponse(res, HttpStatus.CREATED, true, 'Order initiated!', newOrder);
+			ApiResponse(
+				res,
+				HttpStatus.CREATED,
+				true,
+				orderMessages.INIT_SUCCESS,
+				newOrder,
+			);
 		} catch (error: any) {
 			next(error);
 		}
@@ -31,7 +38,7 @@ class OrderController {
 				res,
 				HttpStatus.OK,
 				true,
-				'Order history fetched successfully!',
+				orderMessages.HISTORY_FETCH_SUCCESS,
 				orderHistory,
 			);
 		} catch (error: any) {
@@ -48,7 +55,7 @@ class OrderController {
 				res,
 				HttpStatus.OK,
 				true,
-				'Order details fetched successfully!',
+				orderMessages.DETAILS_FETCH_SUCCESS,
 				order,
 			);
 		} catch (error) {

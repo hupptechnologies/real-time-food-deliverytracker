@@ -3,6 +3,7 @@ import UsersService from './user.service';
 import { ApiResponse } from '../../utils/response';
 import { HttpStatus } from '../../constants/http-status';
 import NotFoundException from '../../exceptions/not-found.exception';
+import { userMessage } from '../../constants/messages';
 
 class UserController {
 	private usersService: UsersService;
@@ -15,7 +16,13 @@ class UserController {
 		try {
 			const body = req.body;
 			const newUser = await this.usersService.create(body);
-			ApiResponse(res, HttpStatus.CREATED, true, 'New user added!', newUser);
+			ApiResponse(
+				res,
+				HttpStatus.CREATED,
+				true,
+				userMessage.CREATE_SUCCESS,
+				newUser,
+			);
 		} catch (error: any) {
 			next(error);
 		}
@@ -26,14 +33,14 @@ class UserController {
 			const { id: userId } = req.params;
 			const user = await this.usersService.findUserById(parseInt(userId, 10));
 			if (!user) {
-				return next(new NotFoundException('User not found!'));
+				return next(new NotFoundException(userMessage.NOT_FOUND));
 			}
 
 			ApiResponse(
 				res,
 				HttpStatus.OK,
 				true,
-				'User details fetched successfully!',
+				userMessage.DETAILS_FETCH_SUCCESS,
 				user,
 			);
 		} catch (error: any) {
@@ -48,7 +55,7 @@ class UserController {
 				res,
 				HttpStatus.OK,
 				true,
-				'Users fetched successfully!',
+				userMessage.LIST_FETCH_SUCCESS,
 				users,
 			);
 		} catch (error: any) {
@@ -68,7 +75,7 @@ class UserController {
 				res,
 				HttpStatus.OK,
 				true,
-				'User details updated!',
+				userMessage.UPDATE_SUCCESS,
 				updatedUser,
 			);
 		} catch (error: any) {
@@ -80,7 +87,7 @@ class UserController {
 		try {
 			const { id: userId } = req.params;
 			await this.usersService.remove(parseInt(userId, 10));
-			ApiResponse(res, HttpStatus.OK, true, 'User deleted!');
+			ApiResponse(res, HttpStatus.OK, true, userMessage.DELETE_SUCCESS);
 		} catch (error: any) {
 			next(error);
 		}
