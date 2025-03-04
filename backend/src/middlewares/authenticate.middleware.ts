@@ -6,16 +6,8 @@ import ForbiddenException from '../exceptions/forbidden.exception';
 import BadRequestException from '../exceptions/bad-request.exception';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
 
-interface UserAuthenticatedRequest extends Request {
-	user?: JwtPayload | { id: number; role: string };
-}
-
 const authenticateMiddleware = (allowedRoles: string[] = []) => {
-	return async (
-		req: UserAuthenticatedRequest,
-		res: Response,
-		next: NextFunction,
-	) => {
+	return async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const token =
 				req.cookies?.authToken || req.headers?.authorization?.split(' ')[1];
