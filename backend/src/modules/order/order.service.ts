@@ -3,9 +3,12 @@ import { AppDataSource } from '../../config/database.config';
 import { generateOrderNumber } from '../../utils/helper';
 import { OrderStatus } from '../../constants/order-status';
 import BadRequestException from '../../exceptions/bad-request.exception';
+import { OrderHistory } from './entities/order_history.entity';
+import InternalServerErrorException from '../../exceptions/internal-server-error.exception';
 
 class OrderService {
 	private orderRepository = AppDataSource.getRepository(Order);
+	private orderHistoryRepository = AppDataSource.getRepository(OrderHistory);
 
 	public async create(payload: any): Promise<Order> {
 		if (!payload.order_number) {
@@ -38,7 +41,17 @@ class OrderService {
 		const savedOrder = await this.orderRepository.save(order);
 
 		// TODO: Process Order Items
-		// TODO: Add history
+
+		if (!savedOrder) {
+			throw new InternalServerErrorException('Failed to initiate order!');
+		}
+
+		const newHistory = new OrderHistory();
+		newHistory.status = 'init';
+		newHistory.order_id = savedOrder.id;
+		newHistory.order = savedOrder;
+
+		await this.orderHistoryRepository.save(newHistory);
 
 		return savedOrder;
 	}
