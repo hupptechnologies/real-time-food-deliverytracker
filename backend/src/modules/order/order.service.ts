@@ -13,7 +13,7 @@ class OrderService {
 		}
 
 		const isDuplicateOrder = await this.orderRepository.findOne({
-			where: payload.order_number,
+			where: { order_number: payload.order_number },
 		});
 
 		if (isDuplicateOrder) {
@@ -29,6 +29,12 @@ class OrderService {
 		order.order_number = payload.order_number;
 		order.address = payload.address;
 
+		const orderTotal = payload.order_items.reduce(
+			(acc: number, curr: any) => acc + Number(curr.price || 0),
+			0,
+		);
+
+		order.order_total = orderTotal;
 		const savedOrder = await this.orderRepository.save(order);
 
 		// TODO: Process Order Items

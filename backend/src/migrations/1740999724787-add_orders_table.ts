@@ -55,6 +55,11 @@ export class AddOrdersTable1740999724787 implements MigrationInterface {
 						isUnique: true,
 					},
 					{
+						name: 'address',
+						type: 'varchar',
+						isNullable: false,
+					},
+					{
 						name: 'order_total',
 						type: 'decimal',
 						precision: 10,
