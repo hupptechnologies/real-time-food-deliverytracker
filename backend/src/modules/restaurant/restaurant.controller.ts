@@ -50,6 +50,7 @@ class RestaurantController {
 			next(error);
 		}
 	}
+
 	public async findOrder(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { orderId, restaurantId } = req.params;
@@ -70,7 +71,27 @@ class RestaurantController {
 			next(error);
 		}
 	}
-	public async findOrders(req: Request, res: Response, next: NextFunction) {}
+
+	public async findOrders(req: Request, res: Response, next: NextFunction) {
+		try {
+			const { restaurantId } = req.params;
+
+			const orders = await this.restaurantService.findOrders(
+				Number(restaurantId),
+			);
+
+			ApiResponse(
+				res,
+				HttpStatus.OK,
+				true,
+				'Orders fetched successfully!',
+				orders,
+			);
+		} catch (error: any) {
+			next(error);
+		}
+	}
+
 	public async findCurrentOrders(
 		req: Request,
 		res: Response,

@@ -65,6 +65,14 @@ class RestaurantService {
 		}
 		return order;
 	}
+
+	public async findOrders(restaurant_id: number): Promise<Order[]> {
+		const orders = await this.orderRepository.find({
+			where: { restaurant_id },
+		});
+
+		return orders;
+	}
 }
 
 export default RestaurantService;

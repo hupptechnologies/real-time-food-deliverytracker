@@ -29,7 +29,12 @@ router.get(
 	'/:restaurantId/orders/:orderId',
 	restaurantController.findOrder.bind(restaurantController),
 );
-router.get('/:restaurantId/orders');
+
+router.get(
+	'/:restaurantId/orders',
+	restaurantController.findOrders.bind(restaurantController),
+);
+
 router.get('/:restaurantId/orders/current');
 
 export default router;
