@@ -15,14 +15,14 @@ class RestaurantController {
 		try {
 			const body = req.body;
 			const userId = req.user?.id as number;
-			const newRole = await this.restaurantService.register(body, userId);
+			const newRestaurant = await this.restaurantService.register(body, userId);
 
 			ApiResponse(
 				res,
 				HttpStatus.CREATED,
 				true,
 				'Restaurant registerd!',
-				newRole,
+				newRestaurant,
 			);
 		} catch (error: any) {
 			next(error);
@@ -33,7 +33,43 @@ class RestaurantController {
 	public async updateMenu(req: Request, res: Response, next: NextFunction) {}
 	public async findMenu(req: Request, res: Response, next: NextFunction) {}
 	public async deleteMenu(req: Request, res: Response, next: NextFunction) {}
-	public async manageOrder(req: Request, res: Response, next: NextFunction) {}
+	public async manageOrder(req: Request, res: Response, next: NextFunction) {
+		try {
+			const { action } = req.query;
+			const { orderId, restaurantId } = req.params;
+
+			await this.restaurantService.manageOrder(
+				action as string,
+				orderId,
+				Number(restaurantId),
+			);
+
+			const responseMessage = action === 'accept' ? 'accepted' : 'rejected';
+			ApiResponse(res, HttpStatus.OK, true, `Order ${responseMessage}!`);
+		} catch (error: any) {
+			next(error);
+		}
+	}
+	public async findOrder(req: Request, res: Response, next: NextFunction) {
+		try {
+			const { orderId, restaurantId } = req.params;
+
+			const order = await this.restaurantService.findOrder(
+				orderId,
+				Number(restaurantId),
+			);
+
+			ApiResponse(
+				res,
+				HttpStatus.OK,
+				true,
+				'Order details fetched successfully!',
+				order,
+			);
+		} catch (error: any) {
+			next(error);
+		}
+	}
 	public async findOrders(req: Request, res: Response, next: NextFunction) {}
 	public async findCurrentOrders(
 		req: Request,

@@ -20,8 +20,16 @@ router.get('/menu');
 router.put('/menu');
 router.delete('/menu');
 
-router.post('/orders/:id');
-router.get('/orders');
-router.get('/orders/current');
+router.post(
+	'/:restaurantId/orders/:orderId',
+	restaurantController.manageOrder.bind(restaurantController),
+);
+
+router.get(
+	'/:restaurantId/orders/:orderId',
+	restaurantController.findOrder.bind(restaurantController),
+);
+router.get('/:restaurantId/orders');
+router.get('/:restaurantId/orders/current');
 
 export default router;
