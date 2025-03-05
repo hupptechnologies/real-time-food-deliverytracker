@@ -1,5 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+	Entity,
+	PrimaryGeneratedColumn,
+	Column,
+	OneToMany,
+	ManyToOne,
+	JoinColumn,
+} from 'typeorm';
 import { OrderHistory } from './order_history.entity';
+import { Restaurant } from '../../restaurant/entities/restaurant.entity';
 
 @Entity('orders')
 export class Order {
@@ -57,4 +65,8 @@ export class Order {
 
 	@OneToMany(() => OrderHistory, (orderHistory) => orderHistory.order)
 	orderHistories!: OrderHistory[];
+
+	@ManyToOne(() => Restaurant, (restaurant) => restaurant.orders)
+	@JoinColumn({ name: 'restaurant_id' })
+	restaurant!: Restaurant;
 }

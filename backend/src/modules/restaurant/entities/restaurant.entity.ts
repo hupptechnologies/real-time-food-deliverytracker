@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Order } from '../../order/entities/order.entity';
 
 @Entity('restaurants')
 export class Restaurant {
@@ -29,4 +30,7 @@ export class Restaurant {
 		onUpdate: 'CURRENT_TIMESTAMP',
 	})
 	updated_at!: Date;
+
+	@OneToMany(() => Order, (order) => order.restaurant)
+	orders!: Order[];
 }
