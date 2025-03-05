@@ -14,7 +14,7 @@ export class Restaurant {
 	@Column({ nullable: false })
 	address!: number;
 
-	@Column({ default: false })
+	@Column({ default: true })
 	is_active?: boolean;
 
 	@Column({

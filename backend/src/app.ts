@@ -5,6 +5,7 @@ import authRoutes from './modules/auth/auth.route';
 import rolesRoutes from './modules/role/role.route';
 import usersRoutes from './modules/user/user.route';
 import ordersRoutes from './modules/order/order.route';
+import restaurantRoutes from './modules/restaurant/restaurant.route';
 import { AppDataSource } from './config/database.config';
 import { DataSource } from 'typeorm';
 import errorMiddleware from './middlewares/error.middleware';
@@ -59,6 +60,7 @@ class App {
 		this.app.use('/api/roles', rolesRoutes);
 		this.app.use('/api/users', usersRoutes);
 		this.app.use('/api/orders', ordersRoutes);
+		this.app.use('/api/restaurants', restaurantRoutes);
 	}
 
 	private initializeErrorHandling() {

@@ -31,7 +31,7 @@ export class AddRestaurantsTable1741156333243 implements MigrationInterface {
 					{
 						name: 'is_active',
 						type: 'boolean',
-						default: false,
+						default: true,
 					},
 					{
 						name: 'created_at',
