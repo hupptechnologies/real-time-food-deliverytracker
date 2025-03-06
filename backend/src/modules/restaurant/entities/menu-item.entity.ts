@@ -14,8 +14,8 @@ export class MenuItem {
 	@PrimaryGeneratedColumn('uuid')
 	id!: string;
 
-	@Column({ type: 'uuid', name: 'restaurant_id' })
-	restaurant_id!: string;
+	@Column({ type: 'integer' })
+	restaurant_id!: number;
 
 	@Column({ type: 'varchar', length: 255 })
 	name!: string;
@@ -32,16 +32,16 @@ export class MenuItem {
 	@Column({ type: 'text', nullable: true })
 	ingredients?: string;
 
-	@Column({ type: 'boolean', default: true, name: 'is_available' })
+	@Column({ type: 'boolean', default: true })
 	is_available!: boolean;
 
-	@Column({ type: 'integer', nullable: true, name: 'display_order' })
+	@Column({ type: 'integer', nullable: true })
 	display_order?: number;
 
-	@CreateDateColumn({ type: 'timestamp with time zone', name: 'created_at' })
+	@CreateDateColumn({ type: 'timestamp with time zone' })
 	created_at!: Date;
 
-	@UpdateDateColumn({ type: 'timestamp with time zone', name: 'updated_at' })
+	@UpdateDateColumn({ type: 'timestamp with time zone' })
 	updated_at!: Date;
 
 	@ManyToOne(() => Restaurant, (restaurant) => restaurant.menuItems)

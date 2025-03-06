@@ -18,7 +18,7 @@ router.use(authenticateMiddleware([Roles.RESTAURANT]));
 
 router.post(
 	'/:restaurantId/menu-items',
-	restaurantController.createMenuItem.bind(restaurantController),
+	restaurantController.createMenuItems.bind(restaurantController),
 );
 router.get(
 	'/:restaurantId/menu-items',

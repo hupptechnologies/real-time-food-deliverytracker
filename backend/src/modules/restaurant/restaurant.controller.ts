@@ -28,11 +28,32 @@ class RestaurantController {
 			next(error);
 		}
 	}
-	public async createMenuItem(
+
+	public async createMenuItems(
 		req: Request,
 		res: Response,
 		next: NextFunction,
-	) {}
+	) {
+		try {
+			const { restaurantId } = req.params;
+			const payload = req.body;
+
+			const newMenuItems = await this.restaurantService.createMenuItems(
+				payload,
+				Number(restaurantId),
+			);
+
+			ApiResponse(
+				res,
+				HttpStatus.CREATED,
+				true,
+				'Menu items created successfully!',
+				newMenuItems,
+			);
+		} catch (error: any) {
+			next(error);
+		}
+	}
 	public async findMenuItemsByRestaurant(
 		req: Request,
 		res: Response,
