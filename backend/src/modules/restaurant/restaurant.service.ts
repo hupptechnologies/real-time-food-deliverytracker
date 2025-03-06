@@ -178,6 +178,20 @@ class RestaurantService {
 		const updatedMenuItem = await this.menuItemRepository.save(menuItem);
 		return updatedMenuItem;
 	}
+
+	public async deleteMenuItem(menu_item_id: string, restaurant_id: number) {
+		const menuItem = await this.menuItemRepository.findOne({
+			where: { id: menu_item_id, restaurant_id },
+		});
+
+		if (!menuItem) {
+			throw new NotFoundException(
+				`Menu item not found with ID ${menu_item_id}`,
+			);
+		}
+
+		await this.menuItemRepository.remove(menuItem);
+	}
 }
 
 export default RestaurantService;

@@ -127,11 +127,17 @@ class RestaurantController {
 		}
 	}
 
-	public async deleteMenuItem(
-		req: Request,
-		res: Response,
-		next: NextFunction,
-	) {}
+	public async deleteMenuItem(req: Request, res: Response, next: NextFunction) {
+		try {
+			const { itemId, restaurantId } = req.params;
+
+			await this.restaurantService.deleteMenuItem(itemId, Number(restaurantId));
+
+			ApiResponse(res, HttpStatus.OK, true, 'Menu item deleted successfully!');
+		} catch (error: any) {
+			next(error);
+		}
+	}
 
 	public async manageOrder(req: Request, res: Response, next: NextFunction) {
 		try {
