@@ -129,6 +129,32 @@ class RestaurantService {
 			await queryRunner.release();
 		}
 	}
+
+	public async findMenuItemsByRestaurant(
+		restaurant_id: number,
+	): Promise<MenuItem[]> {
+		const menuItems = await this.menuItemRepository.find({
+			where: { restaurant_id },
+		});
+		return menuItems;
+	}
+
+	public async findMenuItemById(
+		menu_item_id: string,
+		restaurant_id: number,
+	): Promise<MenuItem> {
+		const menuItem = await this.menuItemRepository.findOne({
+			where: { id: menu_item_id, restaurant_id },
+		});
+
+		if (!menuItem) {
+			throw new NotFoundException(
+				`Menu item not found with ID ${menu_item_id}`,
+			);
+		}
+
+		return menuItem;
+	}
 }
 
 export default RestaurantService;

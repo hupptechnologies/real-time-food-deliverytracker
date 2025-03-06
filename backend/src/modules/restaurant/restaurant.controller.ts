@@ -54,21 +54,62 @@ class RestaurantController {
 			next(error);
 		}
 	}
+
 	public async findMenuItemsByRestaurant(
 		req: Request,
 		res: Response,
 		next: NextFunction,
-	) {}
+	) {
+		try {
+			const { restaurantId } = req.params;
+
+			const menuItems = await this.restaurantService.findMenuItemsByRestaurant(
+				Number(restaurantId),
+			);
+
+			ApiResponse(
+				res,
+				HttpStatus.OK,
+				true,
+				'Menu items fetched successfully!',
+				menuItems,
+			);
+		} catch (error: any) {
+			next(error);
+		}
+	}
+
 	public async findMenuItemById(
 		req: Request,
 		res: Response,
 		next: NextFunction,
-	) {}
+	) {
+		try {
+			const { itemId, restaurantId } = req.params;
+
+			const menuItem = await this.restaurantService.findMenuItemById(
+				itemId,
+				Number(restaurantId),
+			);
+
+			ApiResponse(
+				res,
+				HttpStatus.OK,
+				true,
+				'Menu item fetched successfully!',
+				menuItem,
+			);
+		} catch (error: any) {
+			next(error);
+		}
+	}
+
 	public async updateMenuItem(
 		req: Request,
 		res: Response,
 		next: NextFunction,
 	) {}
+
 	public async deleteMenuItem(
 		req: Request,
 		res: Response,
