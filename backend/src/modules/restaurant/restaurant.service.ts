@@ -155,6 +155,29 @@ class RestaurantService {
 
 		return menuItem;
 	}
+
+	public async updateMenuItem(
+		menu_item_id: string,
+		restaurant_id: number,
+		payload: any,
+	): Promise<MenuItem> {
+		const menuItem = await this.menuItemRepository.findOne({
+			where: { id: menu_item_id, restaurant_id },
+		});
+
+		if (!menuItem) {
+			throw new NotFoundException(
+				`Menu item not found with ID ${menu_item_id}`,
+			);
+		}
+
+		Object.assign(menuItem, payload);
+
+		console.log('### Menu Item ###', menuItem);
+
+		const updatedMenuItem = await this.menuItemRepository.save(menuItem);
+		return updatedMenuItem;
+	}
 }
 
 export default RestaurantService;

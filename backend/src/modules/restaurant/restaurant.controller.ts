@@ -104,11 +104,28 @@ class RestaurantController {
 		}
 	}
 
-	public async updateMenuItem(
-		req: Request,
-		res: Response,
-		next: NextFunction,
-	) {}
+	public async updateMenuItem(req: Request, res: Response, next: NextFunction) {
+		try {
+			const { itemId, restaurantId } = req.params;
+			const payload = req.body;
+
+			const updatedMenuItem = await this.restaurantService.updateMenuItem(
+				itemId,
+				Number(restaurantId),
+				payload,
+			);
+
+			ApiResponse(
+				res,
+				HttpStatus.OK,
+				true,
+				'Menu item updated successfully!',
+				updatedMenuItem,
+			);
+		} catch (error: any) {
+			next(error);
+		}
+	}
 
 	public async deleteMenuItem(
 		req: Request,
