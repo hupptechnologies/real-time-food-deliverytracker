@@ -28,11 +28,32 @@ class RestaurantController {
 			next(error);
 		}
 	}
+	public async createMenuItem(
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	) {}
+	public async findMenuItemsByRestaurant(
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	) {}
+	public async findMenuItemById(
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	) {}
+	public async updateMenuItem(
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	) {}
+	public async deleteMenuItem(
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	) {}
 
-	public async createMenu(req: Request, res: Response, next: NextFunction) {}
-	public async updateMenu(req: Request, res: Response, next: NextFunction) {}
-	public async findMenu(req: Request, res: Response, next: NextFunction) {}
-	public async deleteMenu(req: Request, res: Response, next: NextFunction) {}
 	public async manageOrder(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { action } = req.query;

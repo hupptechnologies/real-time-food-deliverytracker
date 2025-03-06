@@ -15,10 +15,27 @@ router.post(
 );
 
 router.use(authenticateMiddleware([Roles.RESTAURANT]));
-router.post('/menu');
-router.get('/menu');
-router.put('/menu');
-router.delete('/menu');
+
+router.post(
+	'/:restaurantId/menu-items',
+	restaurantController.createMenuItem.bind(restaurantController),
+);
+router.get(
+	'/:restaurantId/menu-items',
+	restaurantController.findMenuItemsByRestaurant.bind(restaurantController),
+);
+router.get(
+	'/:restaurantId/menu-items/:itemId',
+	restaurantController.findMenuItemById.bind(restaurantController),
+);
+router.put(
+	'/:restaurantId/menu-items/:itemId',
+	restaurantController.updateMenuItem.bind(restaurantController),
+);
+router.delete(
+	'/:restaurantId/menu-items/:itemId',
+	restaurantController.deleteMenuItem.bind(restaurantController),
+);
 
 router.post(
 	'/:restaurantId/orders/:orderId',
