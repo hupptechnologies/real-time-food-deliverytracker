@@ -4,6 +4,10 @@ import { useState } from 'react';
 import {
 	Search,
 	Filter,
+	Clock,
+	Phone,
+	Mail,
+	MapPin,
 	MoreHorizontal,
 	Plus,
 	ArrowUpDown,
@@ -35,7 +39,15 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function OrdersPage() {
 	const [searchTerm, setSearchTerm] = useState('');
@@ -282,6 +294,150 @@ export default function OrdersPage() {
 													</DropdownMenuItem>
 												</DropdownMenuContent>
 											</DropdownMenu>
+
+											{/* Order Details Dialog */}
+											<DialogContent className="max-w-2xl">
+												<DialogHeader>
+													<DialogTitle>Order Details - {order.id}</DialogTitle>
+													<DialogDescription>
+														Complete information about the order
+													</DialogDescription>
+												</DialogHeader>
+												<Tabs defaultValue="details" className="mt-4">
+													<TabsList>
+														<TabsTrigger value="details">
+															Order Details
+														</TabsTrigger>
+														<TabsTrigger value="customer">
+															Customer Info
+														</TabsTrigger>
+														<TabsTrigger value="timeline">Timeline</TabsTrigger>
+													</TabsList>
+													<TabsContent value="details" className="space-y-4">
+														<div className="grid grid-cols-2 gap-4">
+															<div>
+																<h4 className="font-medium text-gray-900">
+																	Order Items
+																</h4>
+																<ul className="mt-2 space-y-2">
+																	{order.items.map((item, index) => (
+																		<li
+																			key={index}
+																			className="flex justify-between text-sm"
+																		>
+																			<span>
+																				{item.quantity}x {item.name}
+																			</span>
+																			<span className="text-gray-600">
+																				{item.price}
+																			</span>
+																		</li>
+																	))}
+																</ul>
+																<div className="mt-4 border-t pt-4">
+																	<div className="flex justify-between font-medium">
+																		<span>Total</span>
+																		<span>{order.total}</span>
+																	</div>
+																</div>
+															</div>
+															<div>
+																<h4 className="font-medium text-gray-900">
+																	Order Information
+																</h4>
+																<dl className="mt-2 space-y-2">
+																	<div>
+																		<dt className="text-sm text-gray-500">
+																			Payment Method
+																		</dt>
+																		<dd className="text-sm font-medium">
+																			{order.paymentMethod}
+																		</dd>
+																	</div>
+																	<div>
+																		<dt className="text-sm text-gray-500">
+																			Order Time
+																		</dt>
+																		<dd className="text-sm font-medium">
+																			{new Date(
+																				order.orderTime,
+																			).toLocaleString()}
+																		</dd>
+																	</div>
+																	<div>
+																		<dt className="text-sm text-gray-500">
+																			Delivery Time
+																		</dt>
+																		<dd className="text-sm font-medium">
+																			{order.deliveryTime}
+																		</dd>
+																	</div>
+																	<div>
+																		<dt className="text-sm text-gray-500">
+																			Notes
+																		</dt>
+																		<dd className="text-sm font-medium">
+																			{order.notes}
+																		</dd>
+																	</div>
+																</dl>
+															</div>
+														</div>
+													</TabsContent>
+													<TabsContent value="customer" className="space-y-4">
+														<div className="space-y-4">
+															<div className="flex items-center space-x-4">
+																<div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
+																	<span className="text-lg font-medium text-gray-600">
+																		{order.customer.name.charAt(0)}
+																	</span>
+																</div>
+																<div>
+																	<h4 className="font-medium text-gray-900">
+																		{order.customer.name}
+																	</h4>
+																	<p className="text-sm text-gray-500">
+																		Regular Customer
+																	</p>
+																</div>
+															</div>
+															<div className="space-y-3">
+																<div className="flex items-center text-sm">
+																	<Phone className="mr-2 h-4 w-4 text-gray-400" />
+																	{order.customer.phone}
+																</div>
+																<div className="flex items-center text-sm">
+																	<Mail className="mr-2 h-4 w-4 text-gray-400" />
+																	{order.customer.email}
+																</div>
+																<div className="flex items-start text-sm">
+																	<MapPin className="mr-2 mt-1 h-4 w-4 text-gray-400" />
+																	{order.customer.address}
+																</div>
+															</div>
+														</div>
+													</TabsContent>
+													<TabsContent value="timeline" className="space-y-4">
+														<div className="space-y-6">
+															<div className="flex items-center space-x-4">
+																<div className="flex-none">
+																	<div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+																		<Clock className="h-4 w-4 text-blue-600" />
+																	</div>
+																</div>
+																<div className="flex-1">
+																	<p className="text-sm font-medium text-gray-900">
+																		Order Received
+																	</p>
+																	<p className="text-sm text-gray-500">
+																		{new Date(order.orderTime).toLocaleString()}
+																	</p>
+																</div>
+															</div>
+														</div>
+													</TabsContent>
+												</Tabs>
+											</DialogContent>
 										</Dialog>
 									</TableCell>
 								</TableRow>
