@@ -3,11 +3,17 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bell, User, Settings, LogOut, ChevronRight, X } from 'lucide-react';
-import { signOut } from 'next-auth/react';
+import { Bell, ChevronRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ProfileMenuItem } from '@/types/layout';
 
-export default function AdminHeader() {
+interface DashboardHeaderProps {
+	profileMenuItems: ProfileMenuItem[];
+}
+
+export default function DashboardHeader({
+	profileMenuItems,
+}: DashboardHeaderProps) {
 	const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 	const [isProfileOpen, setIsProfileOpen] = useState(false);
 	const pathname = usePathname();
@@ -49,10 +55,6 @@ export default function AdminHeader() {
 	};
 
 	const breadcrumbs = generateBreadcrumbs();
-
-	const handleLogout = () => {
-		signOut({ callbackUrl: '/' });
-	};
 
 	return (
 		<header className="bg-white shadow-sm">
@@ -153,29 +155,32 @@ export default function AdminHeader() {
 						{isProfileOpen && (
 							<div className="absolute right-0 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
 								<div className="py-1">
-									<Link
-										href="/admin/profile"
-										className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-										onClick={() => setIsProfileOpen(false)}
-									>
-										<User className="mr-3 h-4 w-4" />
-										Profile
-									</Link>
-									<Link
-										href="/admin/settings"
-										className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-										onClick={() => setIsProfileOpen(false)}
-									>
-										<Settings className="mr-3 h-4 w-4" />
-										Settings
-									</Link>
-									<button
-										className="flex w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-										onClick={handleLogout}
-									>
-										<LogOut className="mr-3 h-4 w-4" />
-										Logout
-									</button>
+									{profileMenuItems.map((item, index) => {
+										const Icon = item.icon;
+										return item.type === 'link' ? (
+											<Link
+												key={index}
+												href={item.href}
+												className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+												onClick={() => setIsProfileOpen(false)}
+											>
+												<Icon className="mr-3 h-4 w-4" />
+												{item.label}
+											</Link>
+										) : (
+											<button
+												key={index}
+												className="flex w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+												onClick={() => {
+													item.onClick();
+													setIsProfileOpen(false);
+												}}
+											>
+												<Icon className="mr-3 h-4 w-4" />
+												{item.label}
+											</button>
+										);
+									})}
 								</div>
 							</div>
 						)}

@@ -2,17 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-	MapPin,
-	ChartBar,
-	Users,
-	Store,
-	Bike,
-	Settings,
-	Shield,
-	ShoppingBag,
-	HouseIcon,
-} from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
 	Accordion,
@@ -21,36 +11,14 @@ import {
 	AccordionTrigger,
 } from '@/components/ui/accordion';
 import { ScrollArea } from '@/components/ui/scroll-area';
-
-type NavItem = {
-	name: string;
-	href: string;
-	icon: React.ElementType;
-};
-
-type NavItemWithChildren = NavItem & {
-	children?: NavItem[];
-};
-
-const navigation: NavItemWithChildren[] = [
-	{ name: 'Home', href: '/admin', icon: HouseIcon },
-	{ name: 'Restaurants', href: '/admin/restaurants', icon: Store },
-	{ name: 'Drivers', href: '/admin/drivers', icon: Bike },
-	{ name: 'Customers', href: '/admin/customers', icon: Users },
-	{ name: 'Delivery Zones', href: '/admin/zones', icon: MapPin },
-	{ name: 'Analytics', href: '/admin/analytics', icon: ChartBar },
-	{
-		name: 'System',
-		href: '#',
-		icon: Settings,
-		children: [{ name: 'User Roles', href: '/admin/roles', icon: Shield }],
-	},
-];
+import { NavItemWithChildren } from '@/types/layout';
 
 export default function Sidebar({
+	navigation,
 	isMobileOpen,
 	setMobileOpen,
 }: {
+	navigation: NavItemWithChildren[];
 	isMobileOpen: boolean;
 	setMobileOpen: (_open: boolean) => void;
 }) {

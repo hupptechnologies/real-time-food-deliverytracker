@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { LuSearch, LuClock4, LuMapPin, LuStar } from 'react-icons/lu';
-import Header from '@/components/HomeHeader';
+import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import heroImage from '@/public/images/home/image_1.jpg';
 import pizzaImage from '@/public/images/home/pizza.jpg';

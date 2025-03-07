@@ -3,22 +3,20 @@
 import { useState } from 'react';
 import { signOut } from 'next-auth/react';
 import {
-	MapPin,
 	ChartBar,
-	Users,
-	Store,
-	Bike,
-	Settings,
+	ClipboardList,
+	CookingPot,
 	HouseIcon,
 	LogOut,
+	Settings,
 	User,
 } from 'lucide-react';
-import Sidebar from '@/components/Sidebar';
-import MobileHeader from '@/components/MobileHeader';
 import DashboardHeader from '@/components/DashboardHeader';
+import MobileHeader from '@/components/MobileHeader';
+import Sidebar from '@/components/Sidebar';
 import { NavItemWithChildren } from '@/types/layout';
 
-export default function AdminLayout({
+export default function RestaurantLayout({
 	children,
 }: {
 	children: React.ReactNode;
@@ -26,17 +24,10 @@ export default function AdminLayout({
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
 	const navigation: NavItemWithChildren[] = [
-		{ name: 'Home', href: '/admin', icon: HouseIcon },
-		{ name: 'Restaurants', href: '/admin/restaurants', icon: Store },
-		{ name: 'Drivers', href: '/admin/drivers', icon: Bike },
-		{ name: 'Customers', href: '/admin/customers', icon: Users },
-		{ name: 'Delivery Zones', href: '/admin/zones', icon: MapPin },
-		{ name: 'Analytics', href: '/admin/analytics', icon: ChartBar },
-		{
-			name: 'System',
-			href: '#',
-			icon: Settings,
-		},
+		{ name: 'Home', href: '/restaurant', icon: HouseIcon },
+		{ name: 'Orders', href: '/restaurant/orders', icon: CookingPot },
+		{ name: 'Menu', href: '/restaurant/menu', icon: ClipboardList },
+		{ name: 'Analytics', href: '/restaurant/analytics', icon: ChartBar },
 	];
 
 	return (
@@ -61,13 +52,13 @@ export default function AdminLayout({
 						profileMenuItems={[
 							{
 								type: 'link',
-								href: '/admin/profile',
+								href: '/restaurant/profile',
 								label: 'Profile',
 								icon: User,
 							},
 							{
 								type: 'link',
-								href: '/admin/settings',
+								href: '/restaurant/settings',
 								label: 'Settings',
 								icon: Settings,
 							},
