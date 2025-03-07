@@ -246,6 +246,68 @@ export default function RestaurantDashboard() {
 					</Table>
 				</CardContent>
 			</Card>
+
+			{/* Performance Metrics */}
+			<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+				{/* Popular Items */}
+				<Card>
+					<CardHeader>
+						<CardTitle>Popular Items</CardTitle>
+						<CardDescription>Most ordered items this week</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<div className="space-y-4">
+							{[
+								{ name: 'Margherita Pizza', orders: 145, revenue: '$2,175' },
+								{ name: 'Pepperoni Pizza', orders: 98, revenue: '$1,470' },
+								{ name: 'Garlic Bread', orders: 67, revenue: '$335' },
+								{ name: 'Caesar Salad', orders: 54, revenue: '$432' },
+							].map((item, index) => (
+								<div key={index} className="flex items-center justify-between">
+									<div>
+										<p className="font-medium">{item.name}</p>
+										<p className="text-sm text-gray-500">
+											{item.orders} orders
+										</p>
+									</div>
+									<p className="font-medium text-green-600">{item.revenue}</p>
+								</div>
+							))}
+						</div>
+					</CardContent>
+				</Card>
+
+				{/* Peak Hours */}
+				<Card>
+					<CardHeader>
+						<CardTitle>Peak Hours</CardTitle>
+						<CardDescription>Busiest hours of operation</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<div className="space-y-4">
+							{[
+								{ time: '12:00 PM - 1:00 PM', orders: 45, percentage: '85%' },
+								{ time: '7:00 PM - 8:00 PM', orders: 38, percentage: '72%' },
+								{ time: '6:00 PM - 7:00 PM', orders: 35, percentage: '65%' },
+								{ time: '1:00 PM - 2:00 PM', orders: 28, percentage: '52%' },
+							].map((hour, index) => (
+								<div key={index} className="space-y-2">
+									<div className="flex justify-between text-sm">
+										<span>{hour.time}</span>
+										<span>{hour.orders} orders</span>
+									</div>
+									<div className="h-2 w-full rounded-full bg-gray-200">
+										<div
+											className="h-2 rounded-full bg-red-500"
+											style={{ width: hour.percentage }}
+										/>
+									</div>
+								</div>
+							))}
+						</div>
+					</CardContent>
+				</Card>
+			</div>
 		</div>
 	);
 }
