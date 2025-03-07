@@ -1,28 +1,18 @@
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
 import { LuSearch, LuClock4, LuMapPin, LuStar } from 'react-icons/lu';
-import Header from '@/components/Header';
+import Header from '@/components/HomeHeader';
 import Footer from '@/components/Footer';
+import heroImage from '@/public/images/home/image_1.jpg';
+import pizzaImage from '@/public/images/home/pizza.jpg';
+import burgersImage from '@/public/images/home/burgers.jpg';
+import sushiImage from '@/public/images/home/sushi.jpg';
+import dessertsImage from '@/public/images/home/desserts.jpg';
+import restaurantImage1 from '@/public/images/home/restaurant_1.jpg';
+import restaurantImage2 from '@/public/images/home/restaurant_2.jpg';
+import restaurantImage3 from '@/public/images/home/restaurant_3.jpg';
 
 export default function Home() {
-	const session = useSession();
-
-	if (session) {
-		const userRole = session.data?.user?.role;
-
-		switch (userRole?.name) {
-			case 'admin':
-				redirect('/admin');
-			case 'driver':
-				redirect('/driver/dashboard');
-			case 'restaturant':
-				redirect('/restaurant/dashboard');
-		}
-	}
 	return (
 		<div className="flex min-h-screen flex-col bg-white">
 			<Header />
@@ -30,7 +20,7 @@ export default function Home() {
 			{/* Hero Section */}
 			<section className="relative h-[600px]">
 				<Image
-					src="/images/home/image_1.jpg"
+					src={heroImage}
 					alt="Delicious Food"
 					fill
 					className="object-cover brightness-50"
@@ -103,19 +93,19 @@ export default function Home() {
 						{[
 							{
 								name: 'Pizza',
-								image: '/images/home/pizza.jpg',
+								image: pizzaImage,
 							},
 							{
 								name: 'Burgers',
-								image: '/images/home/burgers.jpg',
+								image: burgersImage,
 							},
 							{
 								name: 'Sushi',
-								image: '/images/home/sushi.jpeg',
+								image: sushiImage,
 							},
 							{
 								name: 'Desserts',
-								image: '/images/home/desserts.jpeg',
+								image: dessertsImage,
 							},
 						].map((category) => (
 							<Link
@@ -147,21 +137,21 @@ export default function Home() {
 						{[
 							{
 								name: 'Pizza Palace',
-								image: '/images/home/restaurant_1.jpeg',
+								image: restaurantImage1,
 								rating: '4.8',
 								cuisine: 'Italian',
 								deliveryTime: '30-40 min',
 							},
 							{
 								name: 'Burger House',
-								image: '/images/home/restaurant_2.jpeg',
+								image: restaurantImage2,
 								rating: '4.5',
 								cuisine: 'American',
 								deliveryTime: '25-35 min',
 							},
 							{
 								name: 'Sushi Master',
-								image: '/images/home/restaurant_3.jpeg',
+								image: restaurantImage3,
 								rating: '4.9',
 								cuisine: 'Japanese',
 								deliveryTime: '35-45 min',

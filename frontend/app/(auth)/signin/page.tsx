@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import signInImage from '@/public/images/auth/signin.jpg';
 
 export default function SignIn() {
 	const [showPassword, setShowPassword] = useState(false);
@@ -33,7 +34,7 @@ export default function SignIn() {
 			<div className="flex min-h-screen">
 				<div className="relative hidden overflow-hidden lg:block lg:w-1/2">
 					<Image
-						src="/images/auth/signin.jpg"
+						src={signInImage}
 						alt="Delicious Food"
 						fill
 						className="object-cover"
