@@ -7,10 +7,33 @@ import {
 	Star,
 	ChevronUp,
 	ChevronDown,
+	MoreHorizontal,
 } from 'lucide-react';
-
-import { Card, CardContent } from '@/components/ui/card';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table';
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function RestaurantDashboard() {
 	// Mock statistics data
@@ -44,6 +67,64 @@ export default function RestaurantDashboard() {
 			changeType: 'positive',
 		},
 	];
+
+	// Mock recent orders
+	const recentOrders = [
+		{
+			id: 'ORD-001',
+			customer: 'John Doe',
+			items: ['2x Margherita Pizza', '1x Garlic Bread'],
+			status: 'Preparing',
+			total: '$35.99',
+			time: '10 mins ago',
+		},
+		{
+			id: 'ORD-002',
+			customer: 'Jane Smith',
+			items: ['1x Pepperoni Pizza', '2x Coke'],
+			status: 'Ready',
+			total: '$28.50',
+			time: '15 mins ago',
+		},
+		{
+			id: 'ORD-003',
+			customer: 'Mike Johnson',
+			items: ['1x Vegetarian Pizza', '1x Caesar Salad'],
+			status: 'Delivered',
+			total: '$42.75',
+			time: '20 mins ago',
+		},
+		{
+			id: 'ORD-004',
+			customer: 'Sarah Wilson',
+			items: ['2x Hawaiian Pizza', '1x Cheesy Fries'],
+			status: 'Preparing',
+			total: '$45.50',
+			time: '25 mins ago',
+		},
+		{
+			id: 'ORD-005',
+			customer: 'Tom Brown',
+			items: ['1x Supreme Pizza', '1x Wings'],
+			status: 'Delivered',
+			total: '$38.25',
+			time: '35 mins ago',
+		},
+	];
+
+	// Helper function to get status badge variant
+	const getStatusBadgeVariant = (status: string) => {
+		switch (status.toLowerCase()) {
+			case 'preparing':
+				return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100 hover:text-yellow-800';
+			case 'ready':
+				return 'bg-green-100 text-green-800 hover:bg-green-100 hover:text-green-800';
+			case 'delivered':
+				return 'bg-blue-100 text-blue-800 hover:bg-blue-100 hover:text-blue-800';
+			default:
+				return 'bg-gray-100 text-gray-800 hover:bg-gray-100 hover:text-gray-800';
+		}
+	};
 
 	return (
 		<div className="space-y-6">
@@ -94,6 +175,77 @@ export default function RestaurantDashboard() {
 					);
 				})}
 			</div>
+
+			{/* Recent orders */}
+			<Card>
+				<CardHeader>
+					<CardTitle>Recent Orders</CardTitle>
+					<CardDescription>
+						Overview of the latest orders and their status
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead>Order ID</TableHead>
+								<TableHead>Customer</TableHead>
+								<TableHead>Items</TableHead>
+								<TableHead>Status</TableHead>
+								<TableHead>Total</TableHead>
+								<TableHead>Time</TableHead>
+								<TableHead className="text-right">Actions</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{recentOrders.map((order) => (
+								<TableRow key={order.id}>
+									<TableCell className="font-medium">{order.id}</TableCell>
+									<TableCell>{order.customer}</TableCell>
+									<TableCell>
+										<ul className="list-inside list-disc">
+											{order.items.map((item, index) => (
+												<li key={index} className="text-sm text-gray-600">
+													{item}
+												</li>
+											))}
+										</ul>
+									</TableCell>
+									<TableCell>
+										<Badge
+											className={`${getStatusBadgeVariant(order.status)} select-none`}
+										>
+											{order.status}
+										</Badge>
+									</TableCell>
+									<TableCell>{order.total}</TableCell>
+									<TableCell>{order.time}</TableCell>
+									<TableCell className="text-right">
+										<DropdownMenu>
+											<DropdownMenuTrigger asChild>
+												<Button variant="ghost" className="h-8 w-8 p-0">
+													<span className="sr-only">Open menu</span>
+													<MoreHorizontal className="h-4 w-4" />
+												</Button>
+											</DropdownMenuTrigger>
+											<DropdownMenuContent align="end">
+												<DropdownMenuLabel>Actions</DropdownMenuLabel>
+												<DropdownMenuItem>View details</DropdownMenuItem>
+												<DropdownMenuItem>Update status</DropdownMenuItem>
+												<DropdownMenuSeparator />
+												<DropdownMenuItem>Contact customer</DropdownMenuItem>
+												<DropdownMenuItem className="text-red-600">
+													Cancel order
+												</DropdownMenuItem>
+											</DropdownMenuContent>
+										</DropdownMenu>
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</CardContent>
+			</Card>
 		</div>
 	);
 }
